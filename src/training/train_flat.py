@@ -55,14 +55,23 @@ def train(args):
         hparams = {
             "model": model_cfg["cafebert_name"], "max_length": model_cfg["max_length"],
             "dropout": model_cfg["dropout"], "epochs": tr_cfg["epochs"], "lr": tr_cfg["lr"],
-            "batch_size": tr_cfg["batch_size"], "warmup_ratio": tr_cfg["warmup_ratio"],
+            "batch_size": tr_cfg["batch_size"], "grad_accum_steps": tr_cfg.get("grad_accum_steps", 1),
+            "effective_batch_size": tr_cfg["batch_size"] * tr_cfg.get("grad_accum_steps", 1),
+            "fp16": tr_cfg.get("fp16", False), "gradient_checkpointing": model_cfg.get("gradient_checkpointing", False),
+            "warmup_ratio": tr_cfg["warmup_ratio"],
             "weight_decay": tr_cfg["weight_decay"], "seed": cfg["project"]["seed"],
             "num_train": len(train_ds), "num_dev": len(dev_ds), "num_test": len(test_ds) if test_ds else 0,
         }
         run = wandb_helper.init_run(cfg, "flat", hparams)
 
-    model = FlatCafeBERT(model_cfg["cafebert_name"], model_cfg["fallback_models"], model_cfg["dropout"], num_labels=3)
+    model = FlatCafeBERT(model_cfg["cafebert_name"], model_cfg["fallback_models"], model_cfg["dropout"], num_labels=3,
+                        gradient_checkpointing=model_cfg.get("gradient_checkpointing", False))
     model.to(device)
+
+    grad_accum = max(1, tr_cfg.get("grad_accum_steps", 1))
+    fp16_enabled = device.type == "cuda" and tr_cfg.get("fp16", False)
+    scaler = torch.amp.GradScaler(device.type, enabled=fp16_enabled)
+    print(f"[train_flat] grad_accum_steps={grad_accum} fp16={fp16_enabled} effective_batch={tr_cfg['batch_size']*grad_accum}")
 
     def collate(batch):
         keys = ["input_ids", "attention_mask"]
@@ -77,7 +86,8 @@ def train(args):
     dev_loader   = torch.utils.data.DataLoader(dev_ds, batch_size=tr_cfg["batch_size"] * 2, collate_fn=collate)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=tr_cfg["lr"], weight_decay=tr_cfg["weight_decay"])
-    total_steps = len(train_loader) * tr_cfg["epochs"]
+    steps_per_epoch = -(-len(train_loader) // grad_accum)  # ceil: 1 optimizer step per grad_accum batches
+    total_steps = steps_per_epoch * tr_cfg["epochs"]
     warmup = int(total_steps * tr_cfg["warmup_ratio"])
     scheduler = get_linear_schedule_with_warmup(optimizer, warmup, total_steps)
 
@@ -91,22 +101,30 @@ def train(args):
     global_step = 0
     for epoch in range(1, tr_cfg["epochs"] + 1):
         model.train(); total_loss = 0
+        optimizer.zero_grad()
+        n_batches = len(train_loader)
         for batch_idx, batch in enumerate(tqdm(train_loader, desc=f"Flat Epoch {epoch}/{tr_cfg['epochs']}"), start=1):
             batch_dev = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items() if k not in ("sample_id", "gold_label")}
-            out = model(input_ids=batch_dev["input_ids"], attention_mask=batch_dev["attention_mask"],
-                        token_type_ids=batch_dev.get("token_type_ids"), labels=batch_dev["labels"])
-            loss = out["loss"]
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            optimizer.step(); scheduler.step(); optimizer.zero_grad()
-            total_loss += loss.item()
-            global_step += 1
-            if global_step % tr_cfg["logging_steps"] == 0:
-                wandb_helper.log_step(run, {
-                    "train/loss": total_loss / batch_idx,
-                    "train/learning_rate": scheduler.get_last_lr()[0],
-                    "train/epoch_progress": epoch - 1 + batch_idx / len(train_loader),
-                }, step=global_step)
+            with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=fp16_enabled):
+                out = model(input_ids=batch_dev["input_ids"], attention_mask=batch_dev["attention_mask"],
+                            token_type_ids=batch_dev.get("token_type_ids"), labels=batch_dev["labels"])
+                loss = out["loss"] / grad_accum
+            scaler.scale(loss).backward()
+            total_loss += loss.item() * grad_accum
+
+            is_last_batch = batch_idx == n_batches
+            if batch_idx % grad_accum == 0 or is_last_batch:
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                scaler.step(optimizer); scaler.update()
+                scheduler.step(); optimizer.zero_grad()
+                global_step += 1
+                if global_step % tr_cfg["logging_steps"] == 0:
+                    wandb_helper.log_step(run, {
+                        "train/loss": total_loss / batch_idx,
+                        "train/learning_rate": scheduler.get_last_lr()[0],
+                        "train/epoch_progress": epoch - 1 + batch_idx / n_batches,
+                    }, step=global_step)
         train_loss_epoch = total_loss / len(train_loader)
         print(f"[epoch {epoch}] loss={train_loss_epoch:.4f} lr={scheduler.get_last_lr()[0]:.2e}")
 
@@ -175,7 +193,8 @@ def evaluate(model, loader, device, return_df=False, compute_loss=False):
             ids = batch["sample_id"]; gold = batch["gold_label"]
             tens = {k: v.to(device) for k, v in batch.items() if k in ("input_ids", "attention_mask", "token_type_ids")}
             labels = batch["labels"].to(device) if compute_loss and "labels" in batch else None
-            out = model(**tens, labels=labels)
+            with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=device.type == "cuda"):
+                out = model(**tens, labels=labels)
             if compute_loss and out["loss"] is not None:
                 total_loss += out["loss"].item(); n_batches += 1
             logits = out["logits"].cpu().numpy()

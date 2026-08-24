@@ -58,14 +58,23 @@ def train(args):
         hparams = {
             "model": mcfg["cafebert_name"], "max_length": mcfg["max_length"], "dropout": mcfg["dropout"],
             "epochs": trcfg["epochs"], "lr": trcfg["lr"], "batch_size": trcfg["batch_size"],
+            "grad_accum_steps": trcfg.get("grad_accum_steps", 1),
+            "effective_batch_size": trcfg["batch_size"] * trcfg.get("grad_accum_steps", 1),
+            "fp16": trcfg.get("fp16", False), "gradient_checkpointing": mcfg.get("gradient_checkpointing", False),
             "warmup_ratio": trcfg["warmup_ratio"], "weight_decay": trcfg["weight_decay"],
             "lambda_fine": trcfg["lambda_fine"], "seed": cfg["project"]["seed"],
             "num_train": len(train_ds), "num_dev": len(dev_ds), "num_test": len(test_ds) if test_ds else 0,
         }
         run = wandb_helper.init_run(cfg, "hier", hparams)
 
-    model = HierarchicalCafeBERT(mcfg["cafebert_name"], mcfg["fallback_models"], mcfg["dropout"], lambda_fine=trcfg["lambda_fine"])
+    model = HierarchicalCafeBERT(mcfg["cafebert_name"], mcfg["fallback_models"], mcfg["dropout"], lambda_fine=trcfg["lambda_fine"],
+                                 gradient_checkpointing=mcfg.get("gradient_checkpointing", False))
     model.to(device)
+
+    grad_accum = max(1, trcfg.get("grad_accum_steps", 1))
+    fp16_enabled = device.type == "cuda" and trcfg.get("fp16", False)
+    scaler = torch.amp.GradScaler(device.type, enabled=fp16_enabled)
+    print(f"[train_hier] grad_accum_steps={grad_accum} fp16={fp16_enabled} effective_batch={trcfg['batch_size']*grad_accum}")
 
     def collate(batch):
         keys = ["input_ids", "attention_mask"]
@@ -88,27 +97,37 @@ def train(args):
         return mock_predict(dev_ds, outcfg, dcfg)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=trcfg["lr"], weight_decay=trcfg["weight_decay"])
-    total = len(train_loader) * trcfg["epochs"]
+    steps_per_epoch = -(-len(train_loader) // grad_accum)  # ceil: 1 optimizer step per grad_accum batches
+    total = steps_per_epoch * trcfg["epochs"]
     scheduler = get_linear_schedule_with_warmup(optimizer, int(total * trcfg["warmup_ratio"]), total)
     best = -1
 
     global_step = 0
     for epoch in range(1, trcfg["epochs"] + 1):
         model.train(); tot = 0
+        optimizer.zero_grad()
+        n_batches = len(train_loader)
         for batch_idx, batch in enumerate(tqdm(train_loader, desc=f"Hier Epoch {epoch}/{trcfg['epochs']}"), start=1):
             tens = {k: v.to(device) for k, v in batch.items() if k in ("input_ids", "attention_mask", "token_type_ids", "coarse_labels", "fine_labels")}
-            out = model(**tens)
-            loss = out["loss"]; loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            optimizer.step(); scheduler.step(); optimizer.zero_grad()
-            tot += loss.item()
-            global_step += 1
-            if global_step % trcfg["logging_steps"] == 0:
-                wandb_helper.log_step(run, {
-                    "train/loss": tot / batch_idx,
-                    "train/learning_rate": scheduler.get_last_lr()[0],
-                    "train/epoch_progress": epoch - 1 + batch_idx / len(train_loader),
-                }, step=global_step)
+            with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=fp16_enabled):
+                out = model(**tens)
+                loss = out["loss"] / grad_accum
+            scaler.scale(loss).backward()
+            tot += loss.item() * grad_accum
+
+            is_last_batch = batch_idx == n_batches
+            if batch_idx % grad_accum == 0 or is_last_batch:
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                scaler.step(optimizer); scaler.update()
+                scheduler.step(); optimizer.zero_grad()
+                global_step += 1
+                if global_step % trcfg["logging_steps"] == 0:
+                    wandb_helper.log_step(run, {
+                        "train/loss": tot / batch_idx,
+                        "train/learning_rate": scheduler.get_last_lr()[0],
+                        "train/epoch_progress": epoch - 1 + batch_idx / n_batches,
+                    }, step=global_step)
         train_loss_epoch = tot / len(train_loader)
         print(f"[epoch {epoch}] loss={train_loss_epoch:.4f} lr={scheduler.get_last_lr()[0]:.2e}")
 
@@ -188,7 +207,8 @@ def evaluate(model, loader, device, return_df=False, compute_loss=False):
             labels = None
             if compute_loss:
                 labels = {"coarse_labels": batch["coarse_labels"].to(device), "fine_labels": batch["fine_labels"].to(device)}
-            out = model(**tens, **(labels or {}))
+            with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=device.type == "cuda"):
+                out = model(**tens, **(labels or {}))
             if compute_loss and out["loss"] is not None:
                 total_loss += out["loss"].item(); n_batches += 1
             coarse_logits.append(out["coarse_logits"].cpu().numpy())

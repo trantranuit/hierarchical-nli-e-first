@@ -9,10 +9,17 @@ class HierarchicalCafeBERT(nn.Module):
     Loss: Gold=E      => L = L_coarse
           Gold=C/N    => L = L_coarse + lambda * L_fine
     """
-    def __init__(self, model_name: str, fallback_models=None, dropout: float=0.1, lambda_fine: float=1.0):
+    def __init__(self, model_name: str, fallback_models=None, dropout: float=0.1, lambda_fine: float=1.0,
+                 gradient_checkpointing: bool=False):
         super().__init__()
         self.lambda_fine = lambda_fine
         self.backbone = self._load_backbone(model_name, fallback_models or [])
+        if gradient_checkpointing:
+            try:
+                self.backbone.gradient_checkpointing_enable()
+                print("[HierCafeBERT] gradient checkpointing enabled (trades compute for VRAM, exact gradients)")
+            except Exception as e:
+                print(f"[HierCafeBERT] gradient checkpointing not supported: {e}")
         hidden = self.backbone.config.hidden_size
         self.dropout = nn.Dropout(dropout)
         self.head_coarse = nn.Linear(hidden, 2)  # E / Non-E

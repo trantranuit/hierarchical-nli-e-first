@@ -7,10 +7,11 @@ project:
   version: "v1-feasibility"
 
 model:
-  cafebert_name: "uitnlp/CafeBERT"   # chốt feasibility: uitnlp/CafeBERT per Boss 2026-08-23
+  cafebert_name: "uitnlp/CafeBERT"   # chốt feasibility: uitnlp/CafeBERT per Boss 2026-08-23 — large, hidden=1024, ~560M tham số (không có bản base)
   fallback_models: ["uitnlp/CafeBERT", "vinai/phobert-base", "xlm-roberta-base"]
   max_length: 512
   dropout: 0.1
+  gradient_checkpointing: true   # recompute activation lúc backward thay vì lưu sẵn — gradient CHÍNH XÁC giống hệt, chỉ đổi ~20-30% compute lấy VRAM, không đổi kết quả
 
 labels:
   flat: ["E", "C", "N"]            # 0,1,2
@@ -32,7 +33,9 @@ data:
 training:
   flat:
     epochs: 3
-    batch_size: 16
+    batch_size: 8             # xuống từ 16 để tránh OOM trên GPU 16GB (T4/L4) với CafeBERT-large ở max_length=512
+    grad_accum_steps: 2       # effective batch = batch_size * grad_accum_steps = 16 — KHÔNG đổi hiệu quả optim, chỉ đổi VRAM
+    fp16: true                 # mixed precision — giảm thêm VRAM + train nhanh hơn trên GPU có Tensor Core, không đổi kết quả cuối
     lr: 2.0e-5
     warmup_ratio: 0.06
     weight_decay: 0.01
@@ -41,7 +44,9 @@ training:
     logging_steps: 50
   hier:
     epochs: 3
-    batch_size: 16
+    batch_size: 8
+    grad_accum_steps: 2
+    fp16: true
     lr: 2.0e-5
     warmup_ratio: 0.06
     weight_decay: 0.01

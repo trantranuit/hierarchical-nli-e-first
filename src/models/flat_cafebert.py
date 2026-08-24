@@ -6,10 +6,17 @@ from transformers import AutoModel, AutoConfig
 LABELS = ["E","C","N"]
 
 class FlatCafeBERT(nn.Module):
-    def __init__(self, model_name: str, fallback_models=None, dropout: float=0.1, num_labels: int=3):
+    def __init__(self, model_name: str, fallback_models=None, dropout: float=0.1, num_labels: int=3,
+                 gradient_checkpointing: bool=False):
         super().__init__()
         self.num_labels = num_labels
         self.backbone = self._load_backbone(model_name, fallback_models or [])
+        if gradient_checkpointing:
+            try:
+                self.backbone.gradient_checkpointing_enable()
+                print("[FlatCafeBERT] gradient checkpointing enabled (trades compute for VRAM, exact gradients)")
+            except Exception as e:
+                print(f"[FlatCafeBERT] gradient checkpointing not supported: {e}")
         hidden = self.backbone.config.hidden_size
         self.dropout = nn.Dropout(dropout)
         self.classifier = nn.Linear(hidden, num_labels)
