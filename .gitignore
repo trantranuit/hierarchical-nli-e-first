@@ -8,6 +8,7 @@ outputs/hier_checkpoints/
 wandb/
 .lh/
 .history/
+configs/_active_run.yaml
 
 # Data thật kéo tại runtime (scripts/prepare_*.py) — không vendor vào repo, chỉ giữ synthetic mẫu nhỏ
 data/raw/vianli/
