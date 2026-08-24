@@ -88,8 +88,10 @@ def train(args):
         out["gold_label"] = [b["gold_label"] for b in batch]
         return out
 
-    train_loader = torch.utils.data.DataLoader(train_ds, batch_size=trcfg["batch_size"], shuffle=True, collate_fn=collate)
-    dev_loader = torch.utils.data.DataLoader(dev_ds, batch_size=trcfg["batch_size"] * 2, collate_fn=collate)
+    num_workers = trcfg.get("num_workers", 0)
+    dl_kwargs = dict(num_workers=num_workers, pin_memory=device.type == "cuda", persistent_workers=num_workers > 0)
+    train_loader = torch.utils.data.DataLoader(train_ds, batch_size=trcfg["batch_size"], shuffle=True, collate_fn=collate, **dl_kwargs)
+    dev_loader = torch.utils.data.DataLoader(dev_ds, batch_size=trcfg["batch_size"] * 2, collate_fn=collate, **dl_kwargs)
 
     best_path = pathlib.Path(outcfg["hier_ckpt"]) / "best"; best_path.mkdir(parents=True, exist_ok=True)
 
@@ -161,7 +163,7 @@ def train(args):
 
     pred_paths = {}
     final_metrics = {}
-    for split, ds, loader in [("dev", dev_ds, dev_loader)] + ([("test", test_ds, torch.utils.data.DataLoader(test_ds, batch_size=trcfg["batch_size"] * 2, collate_fn=collate))] if test_ds else []):
+    for split, ds, loader in [("dev", dev_ds, dev_loader)] + ([("test", test_ds, torch.utils.data.DataLoader(test_ds, batch_size=trcfg["batch_size"] * 2, collate_fn=collate, **dl_kwargs))] if test_ds else []):
         df = evaluate(model, loader, device, return_df=True)
         out_csv = pathlib.Path(outcfg["hier_pred"]) / f"{split}_predictions.csv"
         out_csv.parent.mkdir(parents=True, exist_ok=True)

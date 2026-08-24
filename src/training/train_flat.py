@@ -83,8 +83,10 @@ def train(args):
         out["gold_label"] = [b["gold_label"] for b in batch]
         return out
 
-    train_loader = torch.utils.data.DataLoader(train_ds, batch_size=tr_cfg["batch_size"], shuffle=True, collate_fn=collate)
-    dev_loader   = torch.utils.data.DataLoader(dev_ds, batch_size=tr_cfg["batch_size"] * 2, collate_fn=collate)
+    num_workers = tr_cfg.get("num_workers", 0)
+    dl_kwargs = dict(num_workers=num_workers, pin_memory=device.type == "cuda", persistent_workers=num_workers > 0)
+    train_loader = torch.utils.data.DataLoader(train_ds, batch_size=tr_cfg["batch_size"], shuffle=True, collate_fn=collate, **dl_kwargs)
+    dev_loader   = torch.utils.data.DataLoader(dev_ds, batch_size=tr_cfg["batch_size"] * 2, collate_fn=collate, **dl_kwargs)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=tr_cfg["lr"], weight_decay=tr_cfg["weight_decay"])
     steps_per_epoch = -(-len(train_loader) // grad_accum)  # ceil: 1 optimizer step per grad_accum batches
@@ -158,7 +160,7 @@ def train(args):
 
     pred_paths = {}
     final_metrics = {}
-    for split, ds, loader in [("dev", dev_ds, dev_loader)] + ([("test", test_ds, torch.utils.data.DataLoader(test_ds, batch_size=tr_cfg["batch_size"] * 2, collate_fn=collate))] if test_ds else []):
+    for split, ds, loader in [("dev", dev_ds, dev_loader)] + ([("test", test_ds, torch.utils.data.DataLoader(test_ds, batch_size=tr_cfg["batch_size"] * 2, collate_fn=collate, **dl_kwargs))] if test_ds else []):
         metrics, _, df = evaluate(model, loader, device, return_df=True)
         # save prediction csv per spec: sample_id,gold_label,logit_E,logit_C,logit_N,pred_flat
         out_csv = pathlib.Path(out_cfg["flat_pred"]) / f"{split}_predictions.csv"

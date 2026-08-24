@@ -11,7 +11,7 @@ model:
   fallback_models: ["uitnlp/CafeBERT", "vinai/phobert-base", "xlm-roberta-base"]
   max_length: 512
   dropout: 0.1
-  gradient_checkpointing: true   # recompute activation lúc backward thay vì lưu sẵn — gradient CHÍNH XÁC giống hệt, chỉ đổi ~20-30% compute lấy VRAM, không đổi kết quả
+  gradient_checkpointing: false   # tắt lại — L4 22.5GB dư VRAM (batch=16 chỉ dùng 48%), đổi VRAM thừa lấy tốc độ (~20-30% nhanh hơn). Nếu OOM: đổi lại true, hoặc hạ batch_size
 
 labels:
   flat: ["E", "C", "N"]            # 0,1,2
@@ -37,6 +37,7 @@ training:
     batch_size: 16            # tăng lại 8->16 theo yêu cầu — VRAM 8/15GB (batch=8, fp16+checkpointing) còn dư nên thử; nếu OOM hạ về batch_size:8, grad_accum_steps:2
     grad_accum_steps: 1       # effective batch = batch_size * grad_accum_steps = 16 — giữ nguyên effective batch như trước
     fp16: true                 # mixed precision — giảm thêm VRAM + train nhanh hơn trên GPU có Tensor Core, không đổi kết quả cuối
+    num_workers: 2             # DataLoader tải/tokenize song song với GPU compute thay vì đồng bộ (num_workers=0 mặc định) — dùng system RAM dư, không tốn VRAM
     lr: 2.0e-5
     warmup_ratio: 0.06
     weight_decay: 0.01
@@ -49,6 +50,7 @@ training:
     batch_size: 16
     grad_accum_steps: 1
     fp16: true
+    num_workers: 2
     lr: 2.0e-5
     warmup_ratio: 0.06
     weight_decay: 0.01
