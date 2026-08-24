@@ -1,0 +1,101 @@
+# Hierarchical NLI E-first — Central config (ViNLI dataset variant)
+# ALL DATA MUST IN A FOLDER → outputs/ is inside project
+
+project:
+  name: "hierarchical-nli-e-first"
+  seed: 42
+  version: "v1-feasibility-vinli"
+
+model:
+  cafebert_name: "uitnlp/CafeBERT"   # chốt feasibility: uitnlp/CafeBERT per Boss 2026-08-23 — large, hidden=1024, ~560M tham số (không có bản base)
+  fallback_models: ["uitnlp/CafeBERT", "vinai/phobert-base", "xlm-roberta-base"]
+  max_length: 512
+  dropout: 0.1
+  gradient_checkpointing: false   # L4 22.5GB dư VRAM ở batch=16 — đổi VRAM thừa lấy tốc độ. Nếu OOM: đổi lại true, hoặc hạ batch_size
+  label_smoothing: 0.1   # regularization chống overfit
+
+labels:
+  flat: ["E", "C", "N"]            # 0,1,2
+  coarse: ["E", "Non-E"]           # 0,1
+  fine: ["C", "N"]                 # 0,1
+
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  # Expected raw format: JSONL with {id, premise, hypothesis, label} where label in E/C/N
+  # ViNLI thật: chạy scripts/prepare_vinli.py trước để ghi đè data/raw/*.jsonl (nguồn:
+  # trantranuit/ViHLM_NLI_Project data/vinli/*.csv trên GitHub, không gated).
+  # Synthetic fallback chỉ sinh nếu chưa có file nào ở data/raw/.
+  train_file: "data/raw/train.jsonl"
+  dev_file: "data/raw/dev.jsonl"
+  test_file: "data/raw/test.jsonl"
+  num_synthetic_train: 3000
+  num_synthetic_dev: 500
+  num_synthetic_test: 800
+
+training:
+  flat:
+    epochs: 10                # trần tối đa — thực tế sẽ dừng sớm hơn qua early stopping
+    early_stopping_patience: 8  # tính theo SỐ LẦN EVAL (mỗi eval_steps step), không phải epoch
+    batch_size: 16
+    grad_accum_steps: 1       # effective batch = batch_size * grad_accum_steps = 16
+    fp16: true                 # mixed precision — giảm VRAM + train nhanh hơn, không đổi kết quả cuối
+    num_workers: 2             # DataLoader tải/tokenize song song với GPU compute
+    lr: 2.0e-5
+    warmup_ratio: 0.06
+    weight_decay: 0.05
+    eval_steps: 200           # eval + save-best mỗi 200 step (thay vì chỉ 1 lần/epoch)
+    logging_steps: 50
+  hier:
+    epochs: 10
+    early_stopping_patience: 8
+    batch_size: 16
+    grad_accum_steps: 1
+    fp16: true
+    num_workers: 2
+    lr: 2.0e-5
+    warmup_ratio: 0.06
+    weight_decay: 0.05
+    lambda_fine: 1.0          # λ = 1 — E-first gốc (không phải Run A)
+    eval_steps: 200
+    logging_steps: 50
+
+outputs:
+  flat_ckpt: "outputs/flat_checkpoints"
+  hier_ckpt: "outputs/hier_checkpoints"
+  flat_pred: "outputs/predictions/flat"
+  hier_pred: "outputs/predictions/hier"
+  metrics: "outputs/metrics"
+  diagnostics: "outputs/diagnostics"
+  comparison: "outputs/comparison"
+
+# W&B chỉ dùng để TRACKING: hyperparams, seed, lr, batch_size, train/dev loss,
+# Accuracy, Macro-F1, F1 từng lớp, confusion matrix, run metadata (KHÔNG lưu checkpoint/predictions ở đây).
+wandb:
+  enabled: true
+  project: "hierarchical-nli-e-first"
+  entity: null   # null = dùng entity mặc định của API key
+  experiment_flat: "flat-cafebert-vinli"
+  experiment_hier: "hier-cafebert-vinli"
+
+# HF Hub — repo RIÊNG cho ViNLI (khác repo ViANLI) để không lẫn version tag của 2 dataset khác nhau.
+hf_hub:
+  enabled: true
+  flat_repo_id: "trinhtrantran122/hier-nli-e-first-flat-cafebert-vinli"
+  hier_repo_id: "trinhtrantran122/hier-nli-e-first-hier-cafebert-vinli"
+  private: false
+
+inference:
+  hard: true
+  soft: true
+  # Soft formula: P(E)=P_E ; P(C)=P_NonE*P_C|NonE ; P(N)=P_NonE*P_N|NonE
+
+go_stop:
+  go_if:
+    - "Macro-F1 hier > flat"
+    - "F1 C/N tăng hoặc C↔N confusion giảm"
+    - "Head1 E/Non-E đủ tốt (F1_coarse > 0.80)"
+  stop_if:
+    - "Hier kém Flat rõ ràng"
+    - "Head1 nhầm nhiều C/N → E"
+    - "Không cải thiện C↔N"

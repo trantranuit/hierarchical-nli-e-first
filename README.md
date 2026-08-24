@@ -108,14 +108,22 @@ Mở `notebooks/colab_train.ipynb` bằng Google Colab (File → Upload notebook
 - **GO** nếu Hier Macro-F1 > Flat, F1 C/N tăng hoặc `C↔N` giảm, Head1 E/Non-E tốt.
 - **STOP** nếu Hier kém Flat rõ, Head1 nhầm nhiều `C/N→E`, không cải thiện `C↔N`.
 
-## Data: synthetic (mặc định local) vs ViANLI thật
+## Data: synthetic (mặc định local) vs ViANLI / ViNLI thật
 Nếu `data/raw/*.jsonl` chưa có, pipeline tự gen synthetic (Vi template, 3000/500/800, seed 42) — chỉ để test khung nhanh, không dùng cho kết quả thật.
 
-Để train trên data thật **ViANLI** (`uitnlp/ViANLI` trên HF Hub, train 8012 / dev 1000 / test 1000, không gated):
+### ViANLI (`uitnlp/ViANLI` trên HF Hub — train 8012 / dev 1000 / test 1000, không gated)
 ```bash
 python3 scripts/prepare_vianli.py --config configs/config.yaml
 ```
-Script này tải `vianli_{train,dev,test}.jsonl`, đổi `uid→id` và map nhãn (`entailment→E, contradiction→C, neutral→N`), rồi **ghi đè** `data/raw/*.jsonl`. Sau đó `load_or_generate()` thấy file đã có nên sẽ không sinh synthetic nữa — chạy `train_flat.py`/`train_hierarchical.py` bình thường là dùng đúng ViANLI. Notebook Colab (`notebooks/colab_train.ipynb`) đã tự động gọi script này trước khi train.
+Tải `vianli_{train,dev,test}.jsonl`, đổi `uid→id` và map nhãn (`entailment→E, contradiction→C, neutral→N`), ghi đè `data/raw/*.jsonl`. Notebook Colab: `notebooks/colab_train.ipynb`.
+
+### ViNLI thật (`trantranuit/ViHLM_NLI_Project` trên GitHub — `data/vinli/*.csv`, public, không gated — train 18282 / dev 2255 / test 2264, cân bằng 3 lớp)
+```bash
+python3 scripts/prepare_vinli.py --config configs/config_vinli.yaml
+```
+Tải `sentence1,sentence2,label` (label số: 0=entailment,1=neutral,2=contradiction), đổi tên field và map nhãn số → chữ (`0→E, 1→N, 2→C`), ghi đè `data/raw/*.jsonl`. Dùng riêng `configs/config_vinli.yaml` (batch_size=16, max_length=512, E-first λ=1.0, repo HF riêng `*-vinli` để không lẫn version tag với ViANLI). Notebook Colab: `notebooks/colab_train_vinli.ipynb`.
+
+Cả 2 script đều ghi vào cùng `data/raw/*.jsonl` — chỉ chạy 1 trong 2 tùy dataset muốn train. Sau khi chạy, `load_or_generate()` thấy file đã có nên sẽ không sinh synthetic nữa — `train_flat.py`/`train_hierarchical.py` chạy bình thường là dùng đúng data vừa kéo.
 
 ## Requirements
 `torch, transformers, datasets, scikit-learn, pandas, numpy, tqdm, pyyaml, accelerate, matplotlib, seaborn, wandb, huggingface_hub, python-dotenv`
