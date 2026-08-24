@@ -81,7 +81,7 @@ wandb:
 hf_hub:
   enabled: true
   flat_repo_id: "trinhtrantran122/hier-nli-e-first-flat-cafebert"
-  hier_repo_id: "trinhtrantran122/hier-nli-e-first-hier-cafebert"
+  hier_repo_id: "AITeamUIT/hier-nli-e-first-hier-cafebert"   # account cá nhân trinhtrantran122 đã đầy quota private storage (flat checkpoint ~2.26GB) -> dùng quota riêng của org AITeamUIT cho hier
   private: true
 
 inference:
