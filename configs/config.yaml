@@ -20,13 +20,16 @@ labels:
   fine: ["C", "N"]                 # 0,1
 
 data:
-  raw_dir: "data/raw"
+  # Config này là bản GENERIC/synthetic (mặc định) — mỗi dataset thật có config + thư mục riêng
+  # dưới data/raw/<dataset>/ để không đè lên nhau: configs/config_vianli.yaml, config_vinli.yaml,
+  # config_vimednli.yaml (chạy scripts/prepare_<dataset>.py tương ứng trước khi train).
+  raw_dir: "data/raw/synthetic"
   processed_dir: "data/processed"
   # Expected raw format: JSONL with {id, premise, hypothesis, label} where label in E/C/N
   # Synthetic fallback is generated if no raw files found
-  train_file: "data/raw/train.jsonl"
-  dev_file: "data/raw/dev.jsonl"
-  test_file: "data/raw/test.jsonl"
+  train_file: "data/raw/synthetic/train.jsonl"
+  dev_file: "data/raw/synthetic/dev.jsonl"
+  test_file: "data/raw/synthetic/test.jsonl"
   num_synthetic_train: 3000
   num_synthetic_dev: 500
   num_synthetic_test: 800

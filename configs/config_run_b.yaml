@@ -1,0 +1,108 @@
+# Hierarchical NLI — Run B: N-first hierarchy
+# Root: N / Non-N.  Leaf: E / C (conditioned on Non-N).
+# Câu hỏi Run B: nếu chuyển cặp khó C/N ra khỏi leaf, N-first có giữ được gain E/N của
+# hierarchy mà không hy sinh F1-C? So sánh với Flat và Run A (Hard).
+# ALL DATA MUST IN A FOLDER → outputs/ is inside project
+
+project:
+  name: "hierarchical-nli-e-first"
+  seed: 42
+  version: "run-b-n-first"
+
+model:
+  cafebert_name: "uitnlp/CafeBERT"   # chốt feasibility: uitnlp/CafeBERT per Boss 2026-08-23 — large, hidden=1024, ~560M tham số (không có bản base)
+  fallback_models: ["uitnlp/CafeBERT", "vinai/phobert-base", "xlm-roberta-base"]
+  max_length: 512
+  dropout: 0.1
+  gradient_checkpointing: false   # L4 22.5GB dư VRAM ở batch=16 — đổi VRAM thừa lấy tốc độ. Nếu OOM: đổi lại true, hoặc hạ batch_size
+  label_smoothing: 0.1   # regularization chống overfit — giữ nguyên như Run A
+  head_design: "n_first"   # Root=N/Non-N, Leaf=E/C (conditioned on Non-N) — khác Run A (e_first)
+
+labels:
+  flat: ["E", "C", "N"]            # 0,1,2
+  coarse: ["N", "Non-N"]           # 0,1 — Root Run B
+  fine: ["E", "C"]                 # 0,1 — Leaf Run B (conditioned on Non-N)
+
+# Giữ NGUYÊN protocol Run A: cùng CafeBERT, cùng ViANLI split, cùng seed 42 — cùng
+# data/raw/{train,dev,test}.jsonl mà colab_train.ipynb / config_run_a.yaml đang dùng
+# (chạy scripts/prepare_vianli.py --config configs/config_run_b.yaml trước khi train).
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  train_file: "data/raw/train.jsonl"
+  dev_file: "data/raw/dev.jsonl"
+  test_file: "data/raw/test.jsonl"
+  num_synthetic_train: 3000
+  num_synthetic_dev: 500
+  num_synthetic_test: 800
+
+# Giữ nguyên toàn bộ hyperparameter Run A: LR/batch/epochs/early stopping/eval_steps —
+# chỉ khác head_design + lambda_fine khởi điểm cho N-first.
+training:
+  flat:
+    epochs: 10
+    early_stopping_patience: 8
+    batch_size: 16
+    grad_accum_steps: 1
+    fp16: true
+    num_workers: 2
+    lr: 2.0e-5
+    warmup_ratio: 0.06
+    weight_decay: 0.05
+    eval_steps: 200
+    logging_steps: 50
+  hier:
+    epochs: 10
+    early_stopping_patience: 8
+    batch_size: 16
+    grad_accum_steps: 1
+    fp16: true
+    num_workers: 2
+    lr: 2.0e-5
+    warmup_ratio: 0.06
+    weight_decay: 0.05
+    lambda_fine: 1.0          # Run B: bắt đầu ở 1.0 cho N-first (khác điểm khởi đầu của Run A)
+    eval_steps: 200
+    logging_steps: 50
+
+outputs:
+  flat_ckpt: "outputs/flat_checkpoints"
+  hier_ckpt: "outputs/hier_checkpoints"
+  flat_pred: "outputs/predictions/flat"
+  hier_pred: "outputs/predictions/hier"
+  metrics: "outputs/metrics"
+  diagnostics: "outputs/diagnostics"
+  comparison: "outputs/comparison"
+
+# W&B chỉ dùng để TRACKING: hyperparams, seed, lr, batch_size, train/dev loss,
+# Accuracy, Macro-F1, F1 từng lớp, confusion matrix, run metadata (KHÔNG lưu checkpoint/predictions ở đây).
+wandb:
+  enabled: true
+  project: "hierarchical-nli-e-first"
+  entity: null
+  experiment_flat: "flat-cafebert"
+  experiment_hier: "hier-cafebert-run-b"
+
+# HF Hub — flat_repo_id giữ NGUYÊN như Run A (Flat baseline không đổi giữa Run A/B).
+# hier_repo_id RIÊNG cho Run B (n_first) để version tag (v1/v2/...) không lẫn với
+# checkpoint e_first của Run A trên cùng repo.
+hf_hub:
+  enabled: true
+  flat_repo_id: "trinhtrantran122/hier-nli-e-first-flat-cafebert"
+  hier_repo_id: "trinhtrantran122/hier-nli-e-first-hier-cafebert-runb"
+  private: false
+
+inference:
+  hard: true
+  soft: true
+  # Soft formula (N-first): P(N)=P_N ; P(E)=P_NonN*P_E|NonN ; P(C)=P_NonN*P_C|NonN
+
+go_stop:
+  go_if:
+    - "Macro-F1 hier (Run B) > Flat"
+    - "F1_E, F1_N giữ được gain của hierarchy (so Flat) mà KHÔNG hy sinh F1_C"
+    - "Head1 N/Non-N đủ tốt (F1_coarse > 0.80)"
+  stop_if:
+    - "Run B kém Flat rõ ràng"
+    - "F1_C giảm mạnh so với Flat/Run A dù root N/Non-N tốt"
+    - "Head1 nhầm nhiều E/C → N"

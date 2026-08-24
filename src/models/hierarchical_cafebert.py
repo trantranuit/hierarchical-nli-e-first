@@ -1,17 +1,25 @@
-"""Hierarchical CafeBERT 2-head: shared h -> Head1(E/Non-E) + Head2(C/N)"""
+"""Hierarchical CafeBERT 2-head — supports 2 head_design song song:
+   e_first (Run A): Head1(E/Non-E) + Head2(C/N conditioned on Non-E)
+   n_first (Run B): Head1(N/Non-N) + Head2(E/C conditioned on Non-N)
+"""
 from __future__ import annotations
 import torch, torch.nn as nn
 import torch.nn.functional as F
 from transformers import AutoModel
 
 class HierarchicalCafeBERT(nn.Module):
-    """P+H -> CafeBERT -> h -> Head1(E/Non-E) + Head2(C/N)
-    Loss: Gold=E      => L = L_coarse
-          Gold=C/N    => L = L_coarse + lambda * L_fine
+    """P+H -> CafeBERT -> h -> Head1(coarse) + Head2(fine, conditioned on coarse=Non-root)
+    Loss (per-example, không phải batch-mean gộp 2 support size khác nhau):
+          Gold=root    => L = L_coarse
+          Gold=leaf    => L = L_coarse + lambda * L_fine
+    head_design="e_first": root=E, leaf=C/N.  head_design="n_first": root=N, leaf=E/C.
     """
     def __init__(self, model_name: str, fallback_models=None, dropout: float=0.1, lambda_fine: float=1.0,
-                 gradient_checkpointing: bool=False, label_smoothing: float=0.0):
+                 gradient_checkpointing: bool=False, label_smoothing: float=0.0, head_design: str="e_first"):
         super().__init__()
+        if head_design not in ("e_first", "n_first"):
+            raise ValueError(f"Unknown head_design {head_design!r}, expected 'e_first' or 'n_first'")
+        self.head_design = head_design
         self.lambda_fine = lambda_fine
         self.label_smoothing = label_smoothing
         self.backbone = self._load_backbone(model_name, fallback_models or [])
@@ -23,8 +31,12 @@ class HierarchicalCafeBERT(nn.Module):
                 print(f"[HierCafeBERT] gradient checkpointing not supported: {e}")
         hidden = self.backbone.config.hidden_size
         self.dropout = nn.Dropout(dropout)
-        self.head_coarse = nn.Linear(hidden, 2)  # E / Non-E
-        self.head_fine   = nn.Linear(hidden, 2)  # C / N  (conditioned on Non-E)
+        if head_design == "e_first":
+            self.head_coarse = nn.Linear(hidden, 2)  # E / Non-E
+            self.head_fine   = nn.Linear(hidden, 2)  # C / N  (conditioned on Non-E)
+        else:
+            self.head_coarse = nn.Linear(hidden, 2)  # N / Non-N
+            self.head_fine   = nn.Linear(hidden, 2)  # E / C  (conditioned on Non-N)
 
     def _load_backbone(self, primary, fallbacks):
         for name in [primary] + fallbacks:
@@ -71,31 +83,43 @@ class HierarchicalCafeBERT(nn.Module):
     def predict_hard_soft(self, coarse_logits, fine_logits):
         """Compute hard & soft predictions from logits (offline use as well)."""
         # coarse: [B,2], fine: [B,2]
-        p_coarse = F.softmax(coarse_logits, dim=-1)  # [B,2]  0:E 1:NonE
-        p_fine   = F.softmax(fine_logits, dim=-1)    # [B,2]  0:C  1:N
+        p_coarse = F.softmax(coarse_logits, dim=-1)  # [B,2]
+        p_fine   = F.softmax(fine_logits, dim=-1)    # [B,2]
 
-        p_E = p_coarse[:, 0]
-        p_NonE = p_coarse[:, 1]
-        p_C_given = p_fine[:, 0]
-        p_N_given = p_fine[:, 1]
-
-        p_C = p_NonE * p_C_given
-        p_N = p_NonE * p_N_given
+        if self.head_design == "e_first":
+            # coarse: 0:E 1:NonE ; fine: 0:C 1:N
+            p_E = p_coarse[:, 0]; p_NonRoot = p_coarse[:, 1]
+            p_C = p_NonRoot * p_fine[:, 0]
+            p_N = p_NonRoot * p_fine[:, 1]
+        else:
+            # coarse: 0:N 1:NonN ; fine: 0:E 1:C
+            p_N = p_coarse[:, 0]; p_NonRoot = p_coarse[:, 1]
+            p_E = p_NonRoot * p_fine[:, 0]
+            p_C = p_NonRoot * p_fine[:, 1]
 
         # stack for soft argmax over 3 classes order E,C,N
         p_soft = torch.stack([p_E, p_C, p_N], dim=1)  # [B,3]
         soft_pred = p_soft.argmax(dim=1)  # 0:E 1:C 2:N
 
-        # hard routing: if coarse argmax == E -> E else fine argmax -> C/N
-        coarse_pred = coarse_logits.argmax(dim=1)  # 0:E 1:NonE
-        fine_pred   = fine_logits.argmax(dim=1)    # 0:C 1:N
+        coarse_pred = coarse_logits.argmax(dim=1)  # 0:root 1:non-root
+        fine_pred   = fine_logits.argmax(dim=1)    # 0/1 tùy head_design
         # map to flat ids: E=0, C=1, N=2
-        hard_pred = torch.where(coarse_pred==0,
-                                torch.zeros_like(soft_pred),  # E
-                                torch.where(fine_pred==0,
-                                            torch.ones_like(soft_pred),   # C
-                                            torch.full_like(soft_pred, 2) # N
-                                ))
+        if self.head_design == "e_first":
+            # coarse==0 -> E ; else fine==0->C, fine==1->N
+            hard_pred = torch.where(coarse_pred == 0,
+                                    torch.zeros_like(soft_pred),  # E
+                                    torch.where(fine_pred == 0,
+                                                torch.ones_like(soft_pred),   # C
+                                                torch.full_like(soft_pred, 2) # N
+                                    ))
+        else:
+            # coarse==0 -> N ; else fine==0->E, fine==1->C
+            hard_pred = torch.where(coarse_pred == 0,
+                                    torch.full_like(soft_pred, 2),  # N
+                                    torch.where(fine_pred == 0,
+                                                torch.zeros_like(soft_pred),  # E
+                                                torch.ones_like(soft_pred)    # C
+                                    ))
         return {
             "p_E": p_E, "p_C": p_C, "p_N": p_N,
             "p_soft": p_soft,

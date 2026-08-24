@@ -13,6 +13,7 @@ model:
   dropout: 0.1
   gradient_checkpointing: false   # tắt lại — L4 22.5GB dư VRAM (batch=16 chỉ dùng 48%), đổi VRAM thừa lấy tốc độ (~20-30% nhanh hơn). Nếu OOM: đổi lại true, hoặc hạ batch_size
   label_smoothing: 0.1   # regularization chống overfit — giảm overconfidence của cross-entropy, kỹ thuật chuẩn khi finetune LM lớn trên dataset nhỏ
+  head_design: "e_first"   # Root=E/Non-E, Leaf=C/N (conditioned on Non-E). So sánh: configs/config_run_b.yaml dùng n_first
 
 labels:
   flat: ["E", "C", "N"]            # 0,1,2

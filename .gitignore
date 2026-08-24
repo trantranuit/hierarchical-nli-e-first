@@ -7,3 +7,9 @@ outputs/hier_checkpoints/
 .env
 wandb/
 .lh/
+.history/
+
+# Data thật kéo tại runtime (scripts/prepare_*.py) — không vendor vào repo, chỉ giữ synthetic mẫu nhỏ
+data/raw/vianli/
+data/raw/vinli/
+data/raw/vimednli/

@@ -17,26 +17,47 @@ ID2LABEL = {i:l for l,i in LABEL2ID.items()}
 def logits_to_probs(logits):
     return F.softmax(torch.tensor(logits, dtype=torch.float32), dim=-1).numpy()
 
-def compute_hard_soft(df: pd.DataFrame):
-    """df must have columns: coarse_logit_E, coarse_logit_nonE, fine_logit_C, fine_logit_N
+def compute_hard_soft(df: pd.DataFrame, head_design: str = None):
+    """df must have columns matching head_design:
+      e_first (Run A, default): coarse_logit_E, coarse_logit_nonE, fine_logit_C, fine_logit_N
+      n_first (Run B):          coarse_logit_N, coarse_logit_nonN, fine_logit_E, fine_logit_C
+    head_design=None -> auto-detect from which columns are present in df.
     Returns df with p_E, p_C, p_N, soft_pred, hard_pred (+ label strings)."""
-    coarse = df[["coarse_logit_E","coarse_logit_nonE"]].values.astype(np.float32)
-    fine   = df[["fine_logit_C","fine_logit_N"]].values.astype(np.float32)
+    if head_design is None:
+        head_design = "n_first" if "coarse_logit_N" in df.columns else "e_first"
+    if head_design not in ("e_first", "n_first"):
+        raise ValueError(f"Unknown head_design {head_design!r}, expected 'e_first' or 'n_first'")
+
+    if head_design == "e_first":
+        coarse = df[["coarse_logit_E", "coarse_logit_nonE"]].values.astype(np.float32)
+        fine   = df[["fine_logit_C", "fine_logit_N"]].values.astype(np.float32)
+    else:
+        coarse = df[["coarse_logit_N", "coarse_logit_nonN"]].values.astype(np.float32)
+        fine   = df[["fine_logit_E", "fine_logit_C"]].values.astype(np.float32)
+
     # softmax
     p_coarse = np.exp(coarse) / np.exp(coarse).sum(axis=1, keepdims=True)
     p_fine   = np.exp(fine)   / np.exp(fine).sum(axis=1, keepdims=True)
-    p_E = p_coarse[:,0]
-    p_NonE = p_coarse[:,1]
-    p_C_given = p_fine[:,0]
-    p_N_given = p_fine[:,1]
-    p_C = p_NonE * p_C_given
-    p_N = p_NonE * p_N_given
+
+    if head_design == "e_first":
+        p_E = p_coarse[:, 0]; p_non_root = p_coarse[:, 1]
+        p_C = p_non_root * p_fine[:, 0]
+        p_N = p_non_root * p_fine[:, 1]
+    else:
+        p_N = p_coarse[:, 0]; p_non_root = p_coarse[:, 1]
+        p_E = p_non_root * p_fine[:, 0]
+        p_C = p_non_root * p_fine[:, 1]
+
     p_soft = np.stack([p_E, p_C, p_N], axis=1)
     soft_pred = p_soft.argmax(axis=1)
+
     # hard
-    coarse_pred = coarse.argmax(axis=1)  # 0:E 1:NonE
-    fine_pred   = fine.argmax(axis=1)    # 0:C 1:N
-    hard_pred = np.where(coarse_pred==0, 0, np.where(fine_pred==0, 1, 2))
+    coarse_pred = coarse.argmax(axis=1)  # 0:root 1:non-root
+    fine_pred   = fine.argmax(axis=1)
+    if head_design == "e_first":
+        hard_pred = np.where(coarse_pred == 0, 0, np.where(fine_pred == 0, 1, 2))  # E / C / N
+    else:
+        hard_pred = np.where(coarse_pred == 0, 2, np.where(fine_pred == 0, 0, 1))  # N / E / C
 
     out = df.copy()
     out["p_E"] = p_E

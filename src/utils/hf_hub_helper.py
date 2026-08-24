@@ -5,7 +5,8 @@ or reproduce results without retraining lives in a PRIVATE HF Hub repo per run:
   - best checkpoint (pytorch_model.bin) + tokenizer/config
   - dev/test predictions per sample (logits), matching the exact spec:
       Flat:  sample_id, gold_label, logit_E, logit_C, logit_N
-      Hier:  sample_id, gold_label, coarse_logit_E, coarse_logit_nonE, fine_logit_C, fine_logit_N
+      Hier:  sample_id, gold_label, + coarse_logit_*/fine_logit_* (cột đúng tên tùy head_design —
+             e_first: coarse_logit_E/nonE, fine_logit_C/N | n_first: coarse_logit_N/nonN, fine_logit_E/C)
 
 W&B only stores metrics/metadata + a pointer (repo_id/revision) back here.
 """

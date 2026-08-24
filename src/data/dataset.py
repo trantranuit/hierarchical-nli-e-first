@@ -16,12 +16,27 @@ LABELS_FLAT = ["E", "C", "N"]
 LABEL2ID_FLAT = {l:i for i,l in enumerate(LABELS_FLAT)}
 ID2LABEL_FLAT = {i:l for l,i in LABEL2ID_FLAT.items()}
 
-# Hierarchical mapping
+# Hierarchical mapping — 2 head_design hỗ trợ song song (Run A = e_first, Run B = n_first)
 # Gold -> (coarse_label, fine_label or None)
-GOLD_TO_COARSE = {"E": 0, "C": 1, "N": 1}  # E=0, Non-E=1
-GOLD_TO_FINE   = {"E": None, "C": 0, "N": 1}  # C=0, N=1, E=ignore (-100)
-COARSE_LABELS = ["E", "Non-E"]
-FINE_LABELS   = ["C", "N"]
+HEAD_DESIGNS = {
+    "e_first": {
+        "gold_to_coarse": {"E": 0, "C": 1, "N": 1},        # E=0, Non-E=1
+        "gold_to_fine":   {"E": None, "C": 0, "N": 1},     # C=0, N=1, E=ignore (-100)
+        "coarse_labels": ["E", "Non-E"],
+        "fine_labels":   ["C", "N"],
+    },
+    "n_first": {
+        "gold_to_coarse": {"N": 0, "E": 1, "C": 1},        # N=0, Non-N=1
+        "gold_to_fine":   {"N": None, "E": 0, "C": 1},     # E=0, C=1, N=ignore (-100)
+        "coarse_labels": ["N", "Non-N"],
+        "fine_labels":   ["E", "C"],
+    },
+}
+# giữ tên cũ trỏ về e_first mặc định — không có nơi nào khác trong repo import các biến này
+GOLD_TO_COARSE = HEAD_DESIGNS["e_first"]["gold_to_coarse"]
+GOLD_TO_FINE   = HEAD_DESIGNS["e_first"]["gold_to_fine"]
+COARSE_LABELS  = HEAD_DESIGNS["e_first"]["coarse_labels"]
+FINE_LABELS    = HEAD_DESIGNS["e_first"]["fine_labels"]
 
 VI_TEMPLATES = {
     "E": [
@@ -72,9 +87,14 @@ def generate_synthetic(num_train=3000, num_dev=500, num_test=800, seed=42, out_d
 
 class NLIDataset(Dataset):
     """Returns tokenized tensors + labels for flat/hier."""
-    def __init__(self, jsonl_path: str, tokenizer, max_length: int = 256):
+    def __init__(self, jsonl_path: str, tokenizer, max_length: int = 256, head_design: str = "e_first"):
         self.tokenizer = tokenizer
         self.max_length = max_length
+        if head_design not in HEAD_DESIGNS:
+            raise ValueError(f"Unknown head_design {head_design!r}, expected one of {list(HEAD_DESIGNS)}")
+        self.head_design = head_design
+        self._gold_to_coarse = HEAD_DESIGNS[head_design]["gold_to_coarse"]
+        self._gold_to_fine = HEAD_DESIGNS[head_design]["gold_to_fine"]
         self.samples: List[Dict] = []
         with open(jsonl_path, encoding="utf-8") as f:
             for line in f:
@@ -96,8 +116,8 @@ class NLIDataset(Dataset):
             "attention_mask": torch.tensor(enc["attention_mask"], dtype=torch.long),
             "gold_label": gold,
             "gold_id": LABEL2ID_FLAT[gold],
-            "coarse_label": GOLD_TO_COARSE[gold],
-            "fine_label": GOLD_TO_FINE[gold] if GOLD_TO_FINE[gold] is not None else -100,
+            "coarse_label": self._gold_to_coarse[gold],
+            "fine_label": self._gold_to_fine[gold] if self._gold_to_fine[gold] is not None else -100,
             "sample_id": s["id"],
         }
         # token_type_ids if tokenizer provides

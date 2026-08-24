@@ -1,10 +1,13 @@
 """Train Hierarchical CafeBERT 2-head — Run 2.
 
+Supports 2 head_design (configs/config.yaml -> model.head_design), song song, không loại trừ nhau:
+  e_first (Run A, mặc định): Head1(E/Non-E) + Head2(C/N)  — cột coarse_logit_E/nonE, fine_logit_C/N
+  n_first (Run B):           Head1(N/Non-N) + Head2(E/C)  — cột coarse_logit_N/nonN, fine_logit_E/C
+
 Tracking: W&B only (hyperparams, seed, lr, batch_size, train/dev loss, Accuracy,
 Macro-F1, F1 per class incl. coarse/fine heads, confusion matrix, run metadata).
 Mandatory storage: best checkpoint + tokenizer/config + dev/test per-sample logits
-(coarse_logit_E, coarse_logit_nonE, fine_logit_C, fine_logit_N) are pushed to a
-PRIVATE Hugging Face Hub repo (configs/config.yaml -> hf_hub.hier_repo_id).
+are pushed to a PRIVATE Hugging Face Hub repo (configs/config.yaml -> hf_hub.hier_repo_id).
 """
 from __future__ import annotations
 import argparse, pathlib, yaml, json, random
@@ -41,13 +44,14 @@ def train(args):
     load_or_generate(args.config)
 
     mcfg = cfg["model"]; dcfg = cfg["data"]; trcfg = cfg["training"]["hier"]; outcfg = cfg["outputs"]
+    head_design = mcfg.get("head_design", "e_first")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"[train_hier] device={device} lambda={trcfg['lambda_fine']}")
+    print(f"[train_hier] device={device} lambda={trcfg['lambda_fine']} head_design={head_design}")
 
     tok = get_tok(mcfg["cafebert_name"], mcfg["fallback_models"])
-    train_ds = NLIDataset(dcfg["train_file"], tok, mcfg["max_length"])
-    dev_ds   = NLIDataset(dcfg["dev_file"], tok, mcfg["max_length"])
-    test_ds  = NLIDataset(dcfg["test_file"], tok, mcfg["max_length"]) if pathlib.Path(dcfg["test_file"]).exists() else None
+    train_ds = NLIDataset(dcfg["train_file"], tok, mcfg["max_length"], head_design=head_design)
+    dev_ds   = NLIDataset(dcfg["dev_file"], tok, mcfg["max_length"], head_design=head_design)
+    test_ds  = NLIDataset(dcfg["test_file"], tok, mcfg["max_length"], head_design=head_design) if pathlib.Path(dcfg["test_file"]).exists() else None
     if args.debug:
         for ds in [train_ds, dev_ds, test_ds]:
             if ds: ds.samples = ds.samples[:200]
@@ -63,7 +67,7 @@ def train(args):
             "grad_accum_steps": trcfg.get("grad_accum_steps", 1),
             "effective_batch_size": trcfg["batch_size"] * trcfg.get("grad_accum_steps", 1),
             "fp16": trcfg.get("fp16", False), "gradient_checkpointing": mcfg.get("gradient_checkpointing", False),
-            "label_smoothing": mcfg.get("label_smoothing", 0.0),
+            "label_smoothing": mcfg.get("label_smoothing", 0.0), "head_design": head_design,
             "warmup_ratio": trcfg["warmup_ratio"], "weight_decay": trcfg["weight_decay"],
             "lambda_fine": trcfg["lambda_fine"], "seed": cfg["project"]["seed"],
             "num_train": len(train_ds), "num_dev": len(dev_ds), "num_test": len(test_ds) if test_ds else 0,
@@ -72,7 +76,7 @@ def train(args):
 
     model = HierarchicalCafeBERT(mcfg["cafebert_name"], mcfg["fallback_models"], mcfg["dropout"], lambda_fine=trcfg["lambda_fine"],
                                  gradient_checkpointing=mcfg.get("gradient_checkpointing", False),
-                                 label_smoothing=mcfg.get("label_smoothing", 0.0))
+                                 label_smoothing=mcfg.get("label_smoothing", 0.0), head_design=head_design)
     model.to(device)
 
     grad_accum = max(1, trcfg.get("grad_accum_steps", 1))
@@ -100,7 +104,7 @@ def train(args):
 
     if args.mock:
         print("[train_hier] MOCK mode — random logits, skip training (no W&B/HF push)")
-        return mock_predict(dev_ds, outcfg, dcfg)
+        return mock_predict(dev_ds, outcfg, dcfg, head_design=head_design)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=trcfg["lr"], weight_decay=trcfg["weight_decay"])
     steps_per_epoch = -(-len(train_loader) // grad_accum)  # ceil: 1 optimizer step per grad_accum batches
@@ -150,7 +154,7 @@ def train(args):
                 # for the rationale. Always also eval at the last batch of an epoch as a safety net.
                 should_eval = (eval_steps and global_step % eval_steps == 0) or is_last_batch
                 if should_eval:
-                    dev_metrics, dev_loss = evaluate(model, dev_loader, device, compute_loss=True)
+                    dev_metrics, dev_loss = evaluate(model, dev_loader, device, compute_loss=True, head_design=head_design)
                     print(f"[eval step {global_step} epoch {epoch}] {dev_metrics} dev_loss={dev_loss:.4f}")
                     dev_payload = {f"dev/{k}": v for k, v in dev_metrics.items()}
                     dev_payload["dev/loss"] = dev_loss
@@ -186,14 +190,14 @@ def train(args):
     pred_paths = {}
     final_metrics = {}
     for split, ds, loader in [("dev", dev_ds, dev_loader)] + ([("test", test_ds, torch.utils.data.DataLoader(test_ds, batch_size=trcfg["batch_size"] * 2, collate_fn=collate, **dl_kwargs))] if test_ds else []):
-        df = evaluate(model, loader, device, return_df=True)
+        df = evaluate(model, loader, device, return_df=True, head_design=head_design)
         out_csv = pathlib.Path(outcfg["hier_pred"]) / f"{split}_predictions.csv"
         out_csv.parent.mkdir(parents=True, exist_ok=True)
         df.to_csv(out_csv, index=False)
         pred_paths[split] = out_csv
         print(f"[predict {split}] -> {out_csv} ({len(df)} rows)")
 
-        df2 = compute_hard_soft(df)
+        df2 = compute_hard_soft(df, head_design=head_design)
         df2.to_csv(pathlib.Path(outcfg["hier_pred"]) / f"{split}_predictions_with_hard_soft.csv", index=False)
 
         split_metrics = {}
@@ -209,10 +213,13 @@ def train(args):
             wandb_helper.log_confusion_matrix(run, y_true, y_pred, ["E", "C", "N"], f"confusion_matrix/{split}_{pred_col}")
 
         # coarse/fine head metrics
-        y_true_c = [0 if g == "E" else 1 for g in df["gold_label"]]
-        y_pred_c = (df["coarse_logit_nonE"] > df["coarse_logit_E"]).astype(int).tolist()
+        root_label = "E" if head_design == "e_first" else "N"
+        coarse_col, coarse_nonroot_col = (("coarse_logit_E", "coarse_logit_nonE") if head_design == "e_first"
+                                          else ("coarse_logit_N", "coarse_logit_nonN"))
+        y_true_c = [0 if g == root_label else 1 for g in df["gold_label"]]
+        y_pred_c = (df[coarse_nonroot_col] > df[coarse_col]).astype(int).tolist()
         coarse_f1 = f1_score(y_true_c, y_pred_c, average="macro", zero_division=0)
-        print(f"  Head1 coarse macro-F1: {coarse_f1:.4f}")
+        print(f"  Head1 ({root_label}/Non-{root_label}) coarse macro-F1: {coarse_f1:.4f}")
         split_metrics["coarse_macro_f1"] = coarse_f1
         wandb_helper.log_step(run, {f"final_{split}/coarse_macro_f1": coarse_f1})
 
@@ -232,7 +239,11 @@ def train(args):
     return final_metrics
 
 
-def evaluate(model, loader, device, return_df=False, compute_loss=False):
+def evaluate(model, loader, device, return_df=False, compute_loss=False, head_design="e_first"):
+    coarse_col, coarse_nonroot_col = (("coarse_logit_E", "coarse_logit_nonE") if head_design == "e_first"
+                                      else ("coarse_logit_N", "coarse_logit_nonN"))
+    fine_col0, fine_col1 = (("fine_logit_C", "fine_logit_N") if head_design == "e_first"
+                            else ("fine_logit_E", "fine_logit_C"))
     model.eval()
     coarse_logits = []; fine_logits = []; all_ids = []; all_gold = []
     total_loss = 0.0; n_batches = 0
@@ -254,12 +265,12 @@ def evaluate(model, loader, device, return_df=False, compute_loss=False):
     avg_loss = total_loss / n_batches if n_batches else None
     if return_df:
         df = pd.DataFrame({"sample_id": all_ids, "gold_label": all_gold,
-                           "coarse_logit_E": coarse_logits[:, 0], "coarse_logit_nonE": coarse_logits[:, 1],
-                           "fine_logit_C": fine_logits[:, 0], "fine_logit_N": fine_logits[:, 1]})
+                           coarse_col: coarse_logits[:, 0], coarse_nonroot_col: coarse_logits[:, 1],
+                           fine_col0: fine_logits[:, 0], fine_col1: fine_logits[:, 1]})
         return df
-    df = pd.DataFrame({"coarse_logit_E": coarse_logits[:, 0], "coarse_logit_nonE": coarse_logits[:, 1],
-                       "fine_logit_C": fine_logits[:, 0], "fine_logit_N": fine_logits[:, 1], "gold_label": all_gold})
-    df2 = compute_hard_soft(df)
+    df = pd.DataFrame({coarse_col: coarse_logits[:, 0], coarse_nonroot_col: coarse_logits[:, 1],
+                       fine_col0: fine_logits[:, 0], fine_col1: fine_logits[:, 1], "gold_label": all_gold})
+    df2 = compute_hard_soft(df, head_design=head_design)
     y_true = [LABEL2ID[g] for g in all_gold]
     hard = compute_metrics(y_true, df2["hard_pred"].tolist()) if y_true else {}
     soft = compute_metrics(y_true, df2["soft_pred"].tolist())
@@ -269,30 +280,36 @@ def evaluate(model, loader, device, return_df=False, compute_loss=False):
     return metrics, None
 
 
-def mock_predict(dev_ds, outcfg, dcfg):
+def mock_predict(dev_ds, outcfg, dcfg, head_design="e_first"):
     """Local-only debug aid to verify the pipeline shape — never pushed to W&B/HF."""
     np.random.seed(123)
+    root_label = "E" if head_design == "e_first" else "N"
+    leaf_labels = ("C", "N") if head_design == "e_first" else ("E", "C")
+    coarse_col, coarse_nonroot_col = (("coarse_logit_E", "coarse_logit_nonE") if head_design == "e_first"
+                                      else ("coarse_logit_N", "coarse_logit_nonN"))
+    fine_col0, fine_col1 = (("fine_logit_C", "fine_logit_N") if head_design == "e_first"
+                            else ("fine_logit_E", "fine_logit_C"))
     for split in ["dev", "test"]:
-        src = f"data/raw/{split}.jsonl"
+        src = dcfg[f"{split}_file"]
         if not pathlib.Path(src).exists(): continue
         rows = [json.loads(l) for l in open(src, encoding="utf-8")]
         data = []
         for r in rows:
             gold = r["label"]
             cl = np.random.randn(2); fl = np.random.randn(2)
-            if gold == "E": cl[0] += 1.0
+            if gold == root_label: cl[0] += 1.0
             else: cl[1] += 1.0
-            if gold == "C": fl[0] += 1.0
-            elif gold == "N": fl[1] += 1.0
+            if gold == leaf_labels[0]: fl[0] += 1.0
+            elif gold == leaf_labels[1]: fl[1] += 1.0
             if np.random.rand() < 0.15:
                 cl = np.flip(cl)
             data.append({"sample_id": r["id"], "gold_label": gold,
-                        "coarse_logit_E": float(cl[0]), "coarse_logit_nonE": float(cl[1]),
-                        "fine_logit_C": float(fl[0]), "fine_logit_N": float(fl[1])})
+                        coarse_col: float(cl[0]), coarse_nonroot_col: float(cl[1]),
+                        fine_col0: float(fl[0]), fine_col1: float(fl[1])})
         df = pd.DataFrame(data)
         out = pathlib.Path(outcfg["hier_pred"]) / f"{split}_predictions.csv"; out.parent.mkdir(parents=True, exist_ok=True)
         df.to_csv(out, index=False)
-        df2 = compute_hard_soft(df)
+        df2 = compute_hard_soft(df, head_design=head_design)
         df2.to_csv(pathlib.Path(outcfg["hier_pred"]) / f"{split}_predictions_with_hard_soft.csv", index=False)
         print(f"[mock hier] {out} ({len(df)} rows) -> also with_hard_soft")
         from src.evaluation.metrics import diagnostic_report
