@@ -1,19 +1,15 @@
 # Hierarchical NLI (E-first) — CafeBERT — Feasibility Test
 # All deps in one folder: pip install -r requirements.txt  OR  uv pip install -r requirements.txt
+# Only packages actually imported by src/ and scripts/ — kept minimal to avoid
+# unrelated build failures (e.g. seqeval's setup.py egg_info) on managed envs like Kaggle.
 
 torch>=2.2.0
 transformers>=4.40.0
-datasets>=2.19.0
 scikit-learn>=1.4.0
 pandas>=2.2.0
 numpy>=1.26.0
 tqdm>=4.66.0
 pyyaml>=6.0
-accelerate>=0.29.0
-evaluate>=0.4.1
-seqeval  # not strictly needed, keep for compat
-matplotlib>=3.8.0
-seaborn>=0.13.0
 wandb>=0.17.0
 huggingface_hub>=0.23.0
 python-dotenv>=1.0.0
