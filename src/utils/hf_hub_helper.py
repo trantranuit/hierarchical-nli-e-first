@@ -35,13 +35,29 @@ def ensure_repo(repo_id: str, private: bool = True):
     return repo_id
 
 
+def _next_version_tag(api, repo_id: str) -> str:
+    """v1, v2, v3, ... — same repo every run, no new repo names. Looks at existing
+    git tags on the repo and picks the next free vN."""
+    try:
+        refs = api.list_repo_refs(repo_id=repo_id, repo_type="model")
+        nums = [int(r.name[1:]) for r in refs.tags if r.name.startswith("v") and r.name[1:].isdigit()]
+        return f"v{(max(nums) + 1) if nums else 1}"
+    except Exception as e:
+        print(f"[hf_hub] could not list existing tags ({e}) — defaulting to v1")
+        return "v1"
+
+
 def push_run_artifacts(cfg: dict, run_type: str, checkpoint_dir: pathlib.Path,
                         pred_paths: dict, run_metadata: dict) -> tuple[str, str] | tuple[None, None]:
     """Upload checkpoint dir + prediction CSVs (dev/test) to the run's private HF repo.
 
     pred_paths: {"dev": Path, "test": Path} pointing at the per-sample logits CSV.
-    Returns (repo_id, revision) — revision is the resulting commit SHA, so a W&B run
-    can pin the exact model version. Returns (None, None) if HF Hub push is disabled.
+    Every run pushes to the SAME repo (configs/config.yaml -> hf_hub.{run_type}_repo_id) —
+    no new repo name per run. Instead, each push is tagged v1, v2, v3, ... on that repo,
+    so past versions stay retrievable (e.g. `from_pretrained(repo_id, revision="v2")`)
+    even after `main` moves on to a newer push.
+    Returns (repo_id, version_tag) — version_tag is "v1"/"v2"/... (falls back to the raw
+    commit SHA if tag creation fails). Returns (None, None) if HF Hub push is disabled.
     """
     if not hf_enabled(cfg):
         print(f"[hf_hub] disabled/not configured — skipping upload for {run_type}")
@@ -96,6 +112,17 @@ def push_run_artifacts(cfg: dict, run_type: str, checkpoint_dir: pathlib.Path,
     )
     os.unlink(meta_path)
 
-    revision = getattr(commit_info, "oid", None) or "main"
-    print(f"[hf_hub] pushed {run_type} run -> https://huggingface.co/{repo_id} @ {revision}")
-    return repo_id, revision
+    commit_sha = getattr(commit_info, "oid", None) or "main"
+
+    # tag this commit as the next version (v1, v2, v3, ...) — same repo, no new repo names
+    version_tag = _next_version_tag(api, repo_id)
+    try:
+        api.create_tag(repo_id=repo_id, tag=version_tag, revision=commit_sha, repo_type="model",
+                       tag_message=f"{run_type} run — seed={run_metadata.get('seed')}")
+        print(f"[hf_hub] tagged commit {commit_sha} as {version_tag}")
+    except Exception as e:
+        print(f"[hf_hub] tag creation failed ({e}) — falling back to raw commit SHA as revision")
+        version_tag = commit_sha
+
+    print(f"[hf_hub] pushed {run_type} run -> https://huggingface.co/{repo_id} @ {version_tag} (commit {commit_sha})")
+    return repo_id, version_tag
