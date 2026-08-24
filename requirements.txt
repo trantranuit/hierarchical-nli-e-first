@@ -2,8 +2,14 @@
 # All deps in one folder: pip install -r requirements.txt  OR  uv pip install -r requirements.txt
 # Only packages actually imported by src/ and scripts/ — kept minimal to avoid
 # unrelated build failures (e.g. seqeval's setup.py egg_info) on managed envs like Kaggle.
+#
+# torch is intentionally NOT pinned/listed here: on Kaggle (and most managed GPU
+# notebooks) it ships pre-installed already matched to the instance's GPU. `pip
+# install torch>=2.2.0` pulls the newest PyPI wheel instead, which has dropped CUDA
+# kernels for older compute capabilities (e.g. sm_60 / Tesla P100) -> `CUDA error:
+# no kernel image is available for execution on the device`. If torch is missing
+# locally, install it yourself matching your own GPU/CUDA (see pytorch.org).
 
-torch>=2.2.0
 transformers>=4.40.0
 scikit-learn>=1.4.0
 pandas>=2.2.0

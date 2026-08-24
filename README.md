@@ -89,6 +89,8 @@ python3 scripts/evaluate_offline.py
 CafeBERT priority: `uitnlp/CafeBERT` → `vinai/phobert-base` → `xlm-roberta-base` (auto fallback nếu model chính không tải được).  
 Tokenizer fallback tương tự.
 
+**⚠️ GPU cũ (Pascal, vd Tesla P100 trên Kaggle)**: `requirements.txt` **không** liệt kê `torch` — cố tình, vì torch mới nhất trên PyPI đã bỏ hỗ trợ compute capability `sm_60` của P100 (`pip install torch` sẽ ghi đè bản torch máy/image đã cài sẵn khớp GPU, gây lỗi `CUDA error: no kernel image is available`). Dùng đúng torch có sẵn trong môi trường (Kaggle/Colab tự cài khớp GPU đã chọn); nếu máy chưa có torch, tự cài theo đúng CUDA của GPU tại pytorch.org. Trên Kaggle khuyến nghị chọn **Accelerator: GPU T4 x2** (kiến trúc Turing, luôn được các bản torch mới hỗ trợ) — code chỉ dùng 1 GPU nên không cần lo lãng phí GPU thứ 2.
+
 ## Các bước thực nghiệm (5 bước)
 | Bước | Thực nghiệm | Đánh giá | Đã implement |
 |------|-------------|----------|--------------|
