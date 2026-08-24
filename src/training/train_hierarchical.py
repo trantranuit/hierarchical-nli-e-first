@@ -124,8 +124,13 @@ def train(args):
             if batch_idx % grad_accum == 0 or is_last_batch:
                 scaler.unscale_(optimizer)
                 torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                scale_before = scaler.get_scale()
                 scaler.step(optimizer); scaler.update()
-                scheduler.step(); optimizer.zero_grad()
+                if scaler.get_scale() >= scale_before:
+                    # only step the LR schedule if the optimizer step actually happened —
+                    # GradScaler skips it on inf/nan grads (e.g. while scale auto-calibrates)
+                    scheduler.step()
+                optimizer.zero_grad()
                 global_step += 1
                 if global_step % trcfg["logging_steps"] == 0:
                     wandb_helper.log_step(run, {
