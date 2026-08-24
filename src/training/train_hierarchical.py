@@ -57,7 +57,8 @@ def train(args):
     if not args.mock:
         hparams = {
             "model": mcfg["cafebert_name"], "max_length": mcfg["max_length"], "dropout": mcfg["dropout"],
-            "epochs": trcfg["epochs"], "lr": trcfg["lr"], "batch_size": trcfg["batch_size"],
+            "epochs": trcfg["epochs"], "early_stopping_patience": trcfg.get("early_stopping_patience"),
+            "lr": trcfg["lr"], "batch_size": trcfg["batch_size"],
             "grad_accum_steps": trcfg.get("grad_accum_steps", 1),
             "effective_batch_size": trcfg["batch_size"] * trcfg.get("grad_accum_steps", 1),
             "fp16": trcfg.get("fp16", False), "gradient_checkpointing": mcfg.get("gradient_checkpointing", False),
@@ -101,6 +102,8 @@ def train(args):
     total = steps_per_epoch * trcfg["epochs"]
     scheduler = get_linear_schedule_with_warmup(optimizer, int(total * trcfg["warmup_ratio"]), total)
     best = -1
+    patience = trcfg.get("early_stopping_patience")
+    epochs_no_improve = 0
 
     global_step = 0
     for epoch in range(1, trcfg["epochs"] + 1):
@@ -139,9 +142,17 @@ def train(args):
         cur = dev_metrics["soft_macro_f1"]  # primary selection metric
         if cur > best:
             best = cur
+            epochs_no_improve = 0
             torch.save(model.state_dict(), best_path / "pytorch_model.bin")
             tok.save_pretrained(best_path)
             print(f"  ★ best soft_macro {best:.4f}")
+        else:
+            epochs_no_improve += 1
+            print(f"  no improvement ({epochs_no_improve}/{patience or '∞'} epoch(s))")
+            if patience is not None and epochs_no_improve >= patience:
+                print(f"[train_hier] early stopping — dev soft_macro_f1 không cải thiện sau {patience} epoch liên tiếp (best={best:.4f})")
+                wandb_helper.log_step(run, {"train/early_stopped_at_epoch": epoch})
+                break
 
     try:
         model.load_state_dict(torch.load(best_path / "pytorch_model.bin", map_location=device))

@@ -54,7 +54,8 @@ def train(args):
     if not args.mock:
         hparams = {
             "model": model_cfg["cafebert_name"], "max_length": model_cfg["max_length"],
-            "dropout": model_cfg["dropout"], "epochs": tr_cfg["epochs"], "lr": tr_cfg["lr"],
+            "dropout": model_cfg["dropout"], "epochs": tr_cfg["epochs"],
+            "early_stopping_patience": tr_cfg.get("early_stopping_patience"), "lr": tr_cfg["lr"],
             "batch_size": tr_cfg["batch_size"], "grad_accum_steps": tr_cfg.get("grad_accum_steps", 1),
             "effective_batch_size": tr_cfg["batch_size"] * tr_cfg.get("grad_accum_steps", 1),
             "fp16": tr_cfg.get("fp16", False), "gradient_checkpointing": model_cfg.get("gradient_checkpointing", False),
@@ -93,6 +94,8 @@ def train(args):
 
     best_macro = -1; best_path = pathlib.Path(out_cfg["flat_ckpt"]) / "best"
     best_path.mkdir(parents=True, exist_ok=True)
+    patience = tr_cfg.get("early_stopping_patience")
+    epochs_no_improve = 0
 
     if args.mock:
         print("[train_flat] MOCK mode — random logits, skip training (no W&B/HF push)")
@@ -135,9 +138,17 @@ def train(args):
 
         if metrics["macro_f1"] > best_macro:
             best_macro = metrics["macro_f1"]
+            epochs_no_improve = 0
             torch.save(model.state_dict(), best_path / "pytorch_model.bin")
             tok.save_pretrained(best_path)
             print(f"  ★ new best {best_macro:.4f} -> {best_path}")
+        else:
+            epochs_no_improve += 1
+            print(f"  no improvement ({epochs_no_improve}/{patience or '∞'} epoch(s))")
+            if patience is not None and epochs_no_improve >= patience:
+                print(f"[train_flat] early stopping — dev macro_f1 không cải thiện sau {patience} epoch liên tiếp (best={best_macro:.4f})")
+                wandb_helper.log_step(run, {"train/early_stopped_at_epoch": epoch})
+                break
 
     print("[train_flat] loading best for prediction...")
     try:

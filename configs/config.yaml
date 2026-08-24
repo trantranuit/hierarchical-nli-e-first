@@ -32,7 +32,8 @@ data:
 
 training:
   flat:
-    epochs: 3
+    epochs: 10                # trần tối đa — thực tế sẽ dừng sớm hơn qua early stopping
+    early_stopping_patience: 3  # dừng nếu dev macro_f1 không cải thiện sau 3 epoch liên tiếp
     batch_size: 8             # xuống từ 16 để tránh OOM trên GPU 16GB (T4/L4) với CafeBERT-large ở max_length=512
     grad_accum_steps: 2       # effective batch = batch_size * grad_accum_steps = 16 — KHÔNG đổi hiệu quả optim, chỉ đổi VRAM
     fp16: true                 # mixed precision — giảm thêm VRAM + train nhanh hơn trên GPU có Tensor Core, không đổi kết quả cuối
@@ -43,7 +44,8 @@ training:
     save_steps: 200
     logging_steps: 50
   hier:
-    epochs: 3
+    epochs: 10
+    early_stopping_patience: 3  # dừng nếu dev soft_macro_f1 không cải thiện sau 3 epoch liên tiếp
     batch_size: 8
     grad_accum_steps: 2
     fp16: true
