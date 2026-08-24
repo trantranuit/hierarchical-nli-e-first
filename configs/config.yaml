@@ -45,7 +45,7 @@ training:
     lr: 2.0e-5
     warmup_ratio: 0.06
     weight_decay: 0.05        # tăng từ 0.01 — regularization mạnh hơn, chống overfit (đã thấy rõ dev_loss tăng vọt trong khi train_loss rơi mạnh)
-    eval_steps: 200           # eval + save-best mỗi 200 step (thay vì chỉ 1 lần/epoch) — bắt đúng điểm tốt nhất ở granularity mịn hơn, vì loss giảm rất nhanh trong 1 epoch
+    eval_steps: 500           # eval + save-best mỗi 500 step (thay vì chỉ 1 lần/epoch) — bắt đúng điểm tốt nhất ở granularity mịn hơn, vì loss giảm rất nhanh trong 1 epoch
     logging_steps: 50
   hier:
     epochs: 10
@@ -58,7 +58,7 @@ training:
     warmup_ratio: 0.06
     weight_decay: 0.05
     lambda_fine: 1.0          # λ = 1 vòng đầu
-    eval_steps: 200
+    eval_steps: 500
     logging_steps: 50
 
 outputs:

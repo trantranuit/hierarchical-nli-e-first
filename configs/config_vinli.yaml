@@ -44,7 +44,7 @@ training:
     lr: 2.0e-5
     warmup_ratio: 0.06
     weight_decay: 0.05
-    eval_steps: 200           # eval + save-best mỗi 200 step (thay vì chỉ 1 lần/epoch)
+    eval_steps: 500           # eval + save-best mỗi 500 step (thay vì chỉ 1 lần/epoch)
     logging_steps: 50
   hier:
     epochs: 10
@@ -57,7 +57,7 @@ training:
     warmup_ratio: 0.06
     weight_decay: 0.05
     lambda_fine: 1.0          # λ = 1 — E-first gốc (không phải Run A)
-    eval_steps: 200
+    eval_steps: 500
     logging_steps: 50
 
 outputs:

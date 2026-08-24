@@ -151,8 +151,8 @@ def train(args):
                     }, step=global_step)
 
                 # eval + save-best at eval_steps granularity (not just once/epoch) — see train_flat.py
-                # for the rationale. Always also eval at the last batch of an epoch as a safety net.
-                should_eval = (eval_steps and global_step % eval_steps == 0) or is_last_batch
+                # for the rationale. mới: eval đúng mỗi 500 steps, không eval trùng ở cuối epoch
+                should_eval = bool(eval_steps and global_step % eval_steps == 0)
                 if should_eval:
                     dev_metrics, dev_loss = evaluate(model, dev_loader, device, compute_loss=True, head_design=head_design)
                     print(f"[eval step {global_step} epoch {epoch}] {dev_metrics} dev_loss={dev_loss:.4f}")

@@ -49,7 +49,7 @@ training:
     lr: 2.0e-5
     warmup_ratio: 0.06
     weight_decay: 0.05
-    eval_steps: 200
+    eval_steps: 500
     logging_steps: 50
   hier:
     epochs: 10
@@ -62,7 +62,7 @@ training:
     warmup_ratio: 0.06
     weight_decay: 0.05
     lambda_fine: 1.0          # Run B: bắt đầu ở 1.0 cho N-first (khác điểm khởi đầu của Run A)
-    eval_steps: 200
+    eval_steps: 500
     logging_steps: 50
 
 outputs:

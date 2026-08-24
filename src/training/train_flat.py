@@ -145,10 +145,9 @@ def train(args):
 
                 # eval + save-best at eval_steps granularity (not just once/epoch) — loss can
                 # collapse fast within a single epoch on a small dataset, so the true best
-                # checkpoint may be mid-epoch, not just at the epoch boundary. Always also
-                # eval at the last batch of an epoch as a safety net (e.g. --debug runs with
-                # few batches/epoch that never reach eval_steps).
-                should_eval = (eval_steps and global_step % eval_steps == 0) or is_last_batch
+                # checkpoint may be mid-epoch, not just at the epoch boundary.
+                # mới: eval đúng mỗi 500 steps, không eval trùng ở cuối epoch
+                should_eval = bool(eval_steps and global_step % eval_steps == 0)
                 if should_eval:
                     metrics, dev_loss, _ = evaluate(model, dev_loader, device, compute_loss=True)
                     print(f"[eval step {global_step} epoch {epoch}] {metrics} dev_loss={dev_loss:.4f}")
