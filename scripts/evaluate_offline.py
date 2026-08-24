@@ -1,5 +1,10 @@
 """Offline pipeline: diagnostic flat + hard/soft + comparison — no training."""
-import argparse, pathlib, yaml, json, pandas as pd
+import argparse, pathlib, sys, yaml, json, pandas as pd
+
+# Run as a plain script (`python3 scripts/evaluate_offline.py`) — repo root isn't on
+# sys.path by default (only scripts/ is), so `from src....` would fail. Bootstrap it.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+
 from src.evaluation.hard_soft_inference import compute_hard_soft
 from src.evaluation.metrics import diagnostic_report
 from src.evaluation.compare import compare_all
