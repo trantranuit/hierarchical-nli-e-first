@@ -1,0 +1,100 @@
+# Hierarchical NLI E-first — Central config
+# ALL DATA MUST IN A FOLDER → outputs/ is inside project
+
+project:
+  name: "hierarchical-nli-e-first"
+  seed: 42
+  version: "run-a-e-first-balanced-loss"
+
+model:
+  cafebert_name: "uitnlp/CafeBERT"   # chốt feasibility: uitnlp/CafeBERT per Boss 2026-08-23 — large, hidden=1024, ~560M tham số (không có bản base)
+  fallback_models: ["uitnlp/CafeBERT", "vinai/phobert-base", "xlm-roberta-base"]
+  max_length: 512
+  dropout: 0.1
+  gradient_checkpointing: false   # tắt lại — L4 22.5GB dư VRAM (batch=16 chỉ dùng 48%), đổi VRAM thừa lấy tốc độ (~20-30% nhanh hơn). Nếu OOM: đổi lại true, hoặc hạ batch_size
+  label_smoothing: 0.1   # regularization chống overfit — giảm overconfidence của cross-entropy, kỹ thuật chuẩn khi finetune LM lớn trên dataset nhỏ
+
+labels:
+  flat: ["E", "C", "N"]            # 0,1,2
+  coarse: ["E", "Non-E"]           # 0,1
+  fine: ["C", "N"]                 # 0,1
+
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  # Expected raw format: JSONL with {id, premise, hypothesis, label} where label in E/C/N
+  # Synthetic fallback is generated if no raw files found
+  train_file: "data/raw/train.jsonl"
+  dev_file: "data/raw/dev.jsonl"
+  test_file: "data/raw/test.jsonl"
+  num_synthetic_train: 3000
+  num_synthetic_dev: 500
+  num_synthetic_test: 800
+
+training:
+  flat:
+    epochs: 10                # trần tối đa — thực tế sẽ dừng sớm hơn qua early stopping
+    early_stopping_patience: 8  # tính theo SỐ LẦN EVAL (mỗi eval_steps step), không phải epoch nữa — ~8 eval ≈ ~3 epoch cũ (501 step/epoch, eval mỗi 200 step ≈ 2.5 eval/epoch)
+    batch_size: 16            # tăng lại 8->16 theo yêu cầu — VRAM 8/15GB (batch=8, fp16+checkpointing) còn dư nên thử; nếu OOM hạ về batch_size:8, grad_accum_steps:2
+    grad_accum_steps: 1       # effective batch = batch_size * grad_accum_steps = 16 — giữ nguyên effective batch như trước
+    fp16: true                 # mixed precision — giảm thêm VRAM + train nhanh hơn trên GPU có Tensor Core, không đổi kết quả cuối
+    num_workers: 2             # DataLoader tải/tokenize song song với GPU compute thay vì đồng bộ (num_workers=0 mặc định) — dùng system RAM dư, không tốn VRAM
+    lr: 2.0e-5
+    warmup_ratio: 0.06
+    weight_decay: 0.05        # tăng từ 0.01 — regularization mạnh hơn, chống overfit (đã thấy rõ dev_loss tăng vọt trong khi train_loss rơi mạnh)
+    eval_steps: 200           # eval + save-best mỗi 200 step (thay vì chỉ 1 lần/epoch) — bắt đúng điểm tốt nhất ở granularity mịn hơn, vì loss giảm rất nhanh trong 1 epoch
+    logging_steps: 50
+  hier:
+    epochs: 10
+    early_stopping_patience: 8  # tương tự flat — tính theo số lần eval
+    batch_size: 16
+    grad_accum_steps: 1
+    fp16: true
+    num_workers: 2
+    lr: 2.0e-5
+    warmup_ratio: 0.06
+    weight_decay: 0.05
+    lambda_fine: 0.5          # Run A: giảm từ 1.0 -> 0.5 — bớt ưu tiên fine C/N, để model học root E/Non-E tốt hơn trước
+    eval_steps: 200
+    logging_steps: 50
+
+outputs:
+  flat_ckpt: "outputs/flat_checkpoints"
+  hier_ckpt: "outputs/hier_checkpoints"
+  flat_pred: "outputs/predictions/flat"
+  hier_pred: "outputs/predictions/hier"
+  metrics: "outputs/metrics"
+  diagnostics: "outputs/diagnostics"
+  comparison: "outputs/comparison"
+
+# W&B chỉ dùng để TRACKING: hyperparams, seed, lr, batch_size, train/dev loss,
+# Accuracy, Macro-F1, F1 từng lớp, confusion matrix, run metadata (KHÔNG lưu checkpoint/predictions ở đây).
+wandb:
+  enabled: true
+  project: "hierarchical-nli-e-first"
+  entity: null   # null = dùng entity mặc định của API key (trinhtrantran3105-uit)
+  experiment_flat: "flat-cafebert"
+  experiment_hier: "hier-cafebert"
+
+# HF Hub PRIVATE repo là nơi lưu bắt buộc: best checkpoint, tokenizer/config,
+# và dev/test predictions per-sample (logits) để tải lại model / reproduce mà không cần train lại.
+hf_hub:
+  enabled: true
+  flat_repo_id: "trinhtrantran122/hier-nli-e-first-flat-cafebert"
+  hier_repo_id: "trinhtrantran122/hier-nli-e-first-hier-cafebert"
+  private: false   # account cá nhân trinhtrantran122 đã đầy quota private storage (flat checkpoint ~2.26GB) -> repo hier tạo PUBLIC để không đụng quota. flat repo cũ giữ nguyên private (đã tồn tại từ trước, không bị đổi ngược)
+
+inference:
+  hard: true
+  soft: true
+  # Soft formula: P(E)=P_E ; P(C)=P_NonE*P_C|NonE ; P(N)=P_NonE*P_N|NonE
+
+go_stop:
+  go_if:
+    - "Macro-F1 hier > flat"
+    - "F1 C/N tăng hoặc C↔N confusion giảm"
+    - "Head1 E/Non-E đủ tốt (F1_coarse > 0.80)"
+  stop_if:
+    - "Hier kém Flat rõ ràng"
+    - "Head1 nhầm nhiều C/N → E"
+    - "Không cải thiện C↔N"

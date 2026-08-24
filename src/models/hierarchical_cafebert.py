@@ -50,15 +50,16 @@ class HierarchicalCafeBERT(nn.Module):
 
         loss = None
         if coarse_labels is not None and fine_labels is not None:
-            # coarse loss always
-            loss_coarse = F.cross_entropy(coarse_logits, coarse_labels, label_smoothing=self.label_smoothing)
-            # fine loss only where fine_labels != -100 (i.e. Gold != E)
-            mask = fine_labels != -100
+            # per-example loss (Run A: giảm weight fine C/N qua lambda_fine, không phải qua batch-mean gộp
+            # 2 loss có support size khác nhau — coarse tính trên cả batch, fine chỉ tính trên phần Non-E)
+            coarse_loss = F.cross_entropy(coarse_logits, coarse_labels, reduction="none",
+                                          label_smoothing=self.label_smoothing)
+            fine_loss = torch.zeros_like(coarse_loss)
+            mask = fine_labels != -100  # chỉ C/N
             if mask.any():
-                loss_fine = F.cross_entropy(fine_logits[mask], fine_labels[mask], label_smoothing=self.label_smoothing)
-                loss = loss_coarse + self.lambda_fine * loss_fine
-            else:
-                loss = loss_coarse
+                fine_loss[mask] = F.cross_entropy(fine_logits[mask], fine_labels[mask], reduction="none",
+                                                  label_smoothing=self.label_smoothing)
+            loss = (coarse_loss + self.lambda_fine * fine_loss).mean()
         return {
             "coarse_logits": coarse_logits,
             "fine_logits": fine_logits,
