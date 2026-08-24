@@ -103,8 +103,14 @@ Tokenizer fallback tương tự.
 - **GO** nếu Hier Macro-F1 > Flat, F1 C/N tăng hoặc `C↔N` giảm, Head1 E/Non-E tốt.
 - **STOP** nếu Hier kém Flat rõ, Head1 nhầm nhiều `C/N→E`, không cải thiện `C↔N`.
 
-## Synthetic data
-Nếu `data/raw/*.jsonl` chưa có, pipeline tự gen synthetic (Vi template, 3000/500/800, seed 42). Thay bằng data thật (ViNLI, etc.) chỉ cần overwrite 3 file JSONL đúng schema — code còn lại không đổi.
+## Data: synthetic (mặc định local) vs ViANLI thật
+Nếu `data/raw/*.jsonl` chưa có, pipeline tự gen synthetic (Vi template, 3000/500/800, seed 42) — chỉ để test khung nhanh, không dùng cho kết quả thật.
+
+Để train trên data thật **ViANLI** (`uitnlp/ViANLI` trên HF Hub, train 8012 / dev 1000 / test 1000, không gated):
+```bash
+python3 scripts/prepare_vianli.py --config configs/config.yaml
+```
+Script này tải `vianli_{train,dev,test}.jsonl`, đổi `uid→id` và map nhãn (`entailment→E, contradiction→C, neutral→N`), rồi **ghi đè** `data/raw/*.jsonl`. Sau đó `load_or_generate()` thấy file đã có nên sẽ không sinh synthetic nữa — chạy `train_flat.py`/`train_hierarchical.py` bình thường là dùng đúng ViANLI. Notebook Kaggle (`notebooks/kaggle_train.ipynb`) đã tự động gọi script này trước khi train.
 
 ## Requirements
 `torch, transformers, datasets, scikit-learn, pandas, numpy, tqdm, pyyaml, accelerate, matplotlib, seaborn, wandb, huggingface_hub, python-dotenv`
