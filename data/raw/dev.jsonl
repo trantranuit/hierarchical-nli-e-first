@@ -1,0 +1,500 @@
+{"id": "dev-00209", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00467", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00490", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00152", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00200", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00403", "premise": "Cô ấy mua một chiếc váy. #403", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00059", "premise": "Anh ấy sống ở Hà Nội. #59", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00138", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00293", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00239", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00118", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00449", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00481", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00232", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00270", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00018", "premise": "Anh ấy sống ở Hà Nội. #18", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00157", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00026", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00028", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00227", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00462", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00021", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00077", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00453", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00154", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00222", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00056", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00214", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00390", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00100", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00076", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00252", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00085", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00031", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00376", "premise": "Trời đang mưa. #376", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00004", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00372", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00317", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00147", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00136", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00319", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00344", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00002", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00433", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00338", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00111", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00070", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00279", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00256", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00441", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00487", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00188", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00303", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00052", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00060", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00167", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00370", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00304", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00447", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00019", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00458", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00184", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00034", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00345", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00040", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00236", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00368", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00109", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00242", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00240", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00105", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00343", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00094", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00461", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00278", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00193", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00472", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00071", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00173", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00355", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00388", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00408", "premise": "Hà Nội là thủ đô của Việt Nam. #408", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00062", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00495", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00128", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00486", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00264", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00054", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00080", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00037", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00421", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00402", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00483", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00106", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00131", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00413", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00457", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00069", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00201", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00485", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00215", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00273", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00148", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00263", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00072", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00067", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00354", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00307", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00122", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00288", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00210", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00108", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00489", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00336", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00266", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00096", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00218", "premise": "Cô ấy mua một chiếc váy đỏ. #218", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00241", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00139", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00476", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00143", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00130", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00123", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00117", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00416", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00159", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00196", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00463", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00191", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00351", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00258", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00257", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00093", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00250", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00459", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00016", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00455", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00299", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00230", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00302", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00374", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00448", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00311", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00171", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00025", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00365", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00132", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00440", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00287", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00348", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00346", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00219", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00298", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00267", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00009", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00437", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00113", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00407", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00277", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00262", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00352", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00217", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00478", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00337", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00249", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00436", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00396", "premise": "Mèo đang nằm trên ghế sofa. #396", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00443", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00055", "premise": "Anh ấy còn sống. #55", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00330", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00496", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00245", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00269", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00329", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00048", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00044", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00017", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00190", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00144", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00145", "premise": "Anh ấy sống ở Hà Nội. #145", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00498", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00078", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00334", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00083", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00001", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00261", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00414", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00000", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00043", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00199", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00332", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00375", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00340", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00142", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00015", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00268", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00005", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00309", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00323", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00305", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00192", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00350", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00405", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00361", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00430", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00382", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00089", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00058", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00427", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00102", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00066", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00384", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00023", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00469", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00064", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00271", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00359", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00246", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00090", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00397", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00310", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00300", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00289", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00216", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00035", "premise": "Anh ấy còn sống. #35", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00121", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00301", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00466", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00104", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00206", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00099", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00175", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00411", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00146", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00415", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00465", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00022", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00084", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00030", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00292", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00312", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00237", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00494", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00007", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00383", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00213", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00439", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00194", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00326", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00153", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00063", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00308", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00187", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00041", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00320", "premise": "Cô ấy thích ăn chay. #320", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00333", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00281", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00036", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00061", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00474", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00295", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00003", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00161", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00073", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00208", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00260", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00119", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00169", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00155", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00445", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00231", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00347", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00202", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00367", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00488", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00251", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00480", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00475", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00468", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00335", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00479", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00032", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00075", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00244", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00177", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00029", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00229", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00392", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00011", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00087", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00033", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00223", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00420", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00380", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00235", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00027", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00473", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00137", "premise": "Cuốn sách nằm trên bàn. #137", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00238", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00353", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00283", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00446", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00431", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00426", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00422", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00274", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00243", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00497", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00049", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00065", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00296", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00391", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00126", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00450", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00371", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00039", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00182", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00276", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00163", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00120", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00324", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00189", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00220", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00477", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00186", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00133", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00198", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00294", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00499", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00204", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00400", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00265", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00418", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00482", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00098", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00491", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00282", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00284", "premise": "Cô ấy mua một chiếc váy. #284", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00212", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00409", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00247", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00313", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00010", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00124", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00454", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00006", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00377", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00492", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00451", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00225", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00363", "premise": "Cửa đang mở. #363", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00360", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00112", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00114", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00253", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00493", "premise": "Anh ấy sống ở Hà Nội. #493", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00140", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00341", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00079", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00452", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00125", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00020", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00226", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00115", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00404", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00042", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00291", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00314", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00150", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00053", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00197", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00068", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00389", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00181", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00272", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00174", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00366", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00074", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00460", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00423", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00339", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00306", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00364", "premise": "Người đàn ông đang chạy. #364", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00425", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00047", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00101", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00038", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00356", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00316", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00203", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00091", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00435", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00395", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00444", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00151", "premise": "Cô ấy thích ăn chay. #151", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00286", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00328", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00358", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00259", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00158", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00297", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00097", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00057", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00008", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00165", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00086", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00081", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00386", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00185", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00224", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00172", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00179", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00248", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00362", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00135", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00103", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00195", "premise": "Đội A thắng trận đấu. #195", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00387", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00095", "premise": "Cô ấy mua một chiếc váy. #95", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00429", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00254", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00318", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00160", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00207", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00327", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00046", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00369", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00051", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00156", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00424", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00162", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00116", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00428", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00412", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00378", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00275", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00315", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00470", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00170", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00045", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00438", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00255", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00432", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00088", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00417", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00399", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00178", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00385", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00205", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00379", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00164", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00331", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00280", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00442", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00394", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00285", "premise": "Đội A thắng trận đấu.", "hypothesis": "Đội A thua trận đấu.", "label": "C"}
+{"id": "dev-00107", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00082", "premise": "Trời đang mưa.", "hypothesis": "Trời đang nắng.", "label": "C"}
+{"id": "dev-00406", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00393", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00134", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00325", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00357", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00234", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00166", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00024", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00401", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00228", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00141", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00127", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00180", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00176", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00349", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00419", "premise": "Trời đang mưa rất to.", "hypothesis": "Thời tiết có mưa.", "label": "E"}
+{"id": "dev-00183", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00129", "premise": "Cô ấy thích ăn chay.", "hypothesis": "Cô ấy thích ăn thịt mỗi ngày.", "label": "C"}
+{"id": "dev-00456", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00434", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00233", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00373", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00014", "premise": "Mèo đang nằm trên ghế sofa.", "hypothesis": "Có một con mèo trên ghế.", "label": "E"}
+{"id": "dev-00410", "premise": "Người đàn ông đang chạy. #410", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00211", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00471", "premise": "Cô ấy mua một chiếc váy đỏ. #471", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00149", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00050", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00168", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00484", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00322", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00012", "premise": "Cửa đang mở.", "hypothesis": "Cửa đang đóng.", "label": "C"}
+{"id": "dev-00092", "premise": "Hà Nội là thủ đô của Việt Nam.", "hypothesis": "Hà Nội thuộc Việt Nam.", "label": "E"}
+{"id": "dev-00290", "premise": "Trời đang mưa.", "hypothesis": "Ngày mai trời sẽ nắng.", "label": "N"}
+{"id": "dev-00110", "premise": "Người đàn ông đang chạy.", "hypothesis": "Một người đang chạy.", "label": "E"}
+{"id": "dev-00013", "premise": "Cô ấy mua một chiếc váy đỏ.", "hypothesis": "Cô ấy mua váy.", "label": "E"}
+{"id": "dev-00464", "premise": "Anh ấy còn sống.", "hypothesis": "Anh ấy đã chết.", "label": "C"}
+{"id": "dev-00342", "premise": "Cô ấy mua một chiếc váy.", "hypothesis": "Cô ấy mua váy để đi dự tiệc tối nay.", "label": "N"}
+{"id": "dev-00221", "premise": "Anh ấy sống ở Hà Nội.", "hypothesis": "Anh ấy thích phở Hà Nội.", "label": "N"}
+{"id": "dev-00398", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}
+{"id": "dev-00381", "premise": "Cuốn sách nằm trên bàn.", "hypothesis": "Cuốn sách rất thú vị.", "label": "N"}
+{"id": "dev-00321", "premise": "Người đàn ông đang chạy.", "hypothesis": "Người đàn ông đang chạy nhanh vì trễ giờ.", "label": "N"}

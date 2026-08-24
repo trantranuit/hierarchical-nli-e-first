@@ -1,0 +1,101 @@
+"""Hugging Face Hub helper — MANDATORY storage for reproducibility.
+
+Everything needed to reload a model and rerun Hard/Soft inference, error analysis,
+or reproduce results without retraining lives in a PRIVATE HF Hub repo per run:
+  - best checkpoint (pytorch_model.bin) + tokenizer/config
+  - dev/test predictions per sample (logits), matching the exact spec:
+      Flat:  sample_id, gold_label, logit_E, logit_C, logit_N
+      Hier:  sample_id, gold_label, coarse_logit_E, coarse_logit_nonE, fine_logit_C, fine_logit_N
+
+W&B only stores metrics/metadata + a pointer (repo_id/revision) back here.
+"""
+from __future__ import annotations
+import os
+import pathlib
+from src.utils.env import load_env  # noqa: F401
+
+try:
+    from huggingface_hub import HfApi
+    HAS_HF = True
+except ImportError:
+    HAS_HF = False
+
+
+def hf_enabled(cfg: dict) -> bool:
+    return HAS_HF and cfg.get("hf_hub", {}).get("enabled", True) and bool(os.getenv("HF_TOKEN"))
+
+
+def _api():
+    return HfApi(token=os.environ["HF_TOKEN"])
+
+
+def ensure_repo(repo_id: str, private: bool = True):
+    api = _api()
+    api.create_repo(repo_id=repo_id, repo_type="model", private=private, exist_ok=True)
+    return repo_id
+
+
+def push_run_artifacts(cfg: dict, run_type: str, checkpoint_dir: pathlib.Path,
+                        pred_paths: dict, run_metadata: dict) -> tuple[str, str] | tuple[None, None]:
+    """Upload checkpoint dir + prediction CSVs (dev/test) to the run's private HF repo.
+
+    pred_paths: {"dev": Path, "test": Path} pointing at the per-sample logits CSV.
+    Returns (repo_id, revision) — revision is the resulting commit SHA, so a W&B run
+    can pin the exact model version. Returns (None, None) if HF Hub push is disabled.
+    """
+    if not hf_enabled(cfg):
+        print(f"[hf_hub] disabled/not configured — skipping upload for {run_type}")
+        return None, None
+
+    hf_cfg = cfg.get("hf_hub", {})
+    repo_id = hf_cfg.get(f"{run_type}_repo_id")
+    if not repo_id:
+        print(f"[hf_hub] no repo_id configured for {run_type} — skipping upload")
+        return None, None
+
+    private = hf_cfg.get("private", True)
+    ensure_repo(repo_id, private=private)
+    api = _api()
+
+    commit_msg = f"{run_type} run — seed={run_metadata.get('seed')} lambda={run_metadata.get('lambda_fine', 'n/a')}"
+
+    # 1) checkpoint + tokenizer/config
+    if checkpoint_dir.exists() and any(checkpoint_dir.iterdir()):
+        api.upload_folder(
+            repo_id=repo_id, repo_type="model",
+            folder_path=str(checkpoint_dir),
+            path_in_repo="checkpoint",
+            commit_message=f"{commit_msg} — checkpoint",
+        )
+    else:
+        print(f"[hf_hub] checkpoint dir empty, skipping checkpoint upload ({checkpoint_dir})")
+
+    # 2) predictions (per-sample logits, dev/test)
+    for split, path in pred_paths.items():
+        path = pathlib.Path(path)
+        if path.exists():
+            api.upload_file(
+                repo_id=repo_id, repo_type="model",
+                path_or_fileobj=str(path),
+                path_in_repo=f"predictions/{path.name}",
+                commit_message=f"{commit_msg} — {split} predictions",
+            )
+        else:
+            print(f"[hf_hub] predictions file missing, skipping: {path}")
+
+    # 3) run metadata as a small JSON card (seed, hparams, metrics pointer)
+    import json, tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as f:
+        json.dump(run_metadata, f, indent=2, ensure_ascii=False)
+        meta_path = f.name
+    commit_info = api.upload_file(
+        repo_id=repo_id, repo_type="model",
+        path_or_fileobj=meta_path,
+        path_in_repo="run_metadata.json",
+        commit_message=f"{commit_msg} — run metadata",
+    )
+    os.unlink(meta_path)
+
+    revision = getattr(commit_info, "oid", None) or "main"
+    print(f"[hf_hub] pushed {run_type} run -> https://huggingface.co/{repo_id} @ {revision}")
+    return repo_id, revision

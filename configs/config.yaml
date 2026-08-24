@@ -1,0 +1,92 @@
+# Hierarchical NLI E-first — Central config
+# ALL DATA MUST IN A FOLDER → outputs/ is inside project
+
+project:
+  name: "hierarchical-nli-e-first"
+  seed: 42
+  version: "v1-feasibility"
+
+model:
+  cafebert_name: "uitnlp/CafeBERT"   # chốt feasibility: uitnlp/CafeBERT per Boss 2026-08-23
+  fallback_models: ["uitnlp/CafeBERT", "vinai/phobert-base", "xlm-roberta-base"]
+  max_length: 512
+  dropout: 0.1
+
+labels:
+  flat: ["E", "C", "N"]            # 0,1,2
+  coarse: ["E", "Non-E"]           # 0,1
+  fine: ["C", "N"]                 # 0,1
+
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  # Expected raw format: JSONL with {id, premise, hypothesis, label} where label in E/C/N
+  # Synthetic fallback is generated if no raw files found
+  train_file: "data/raw/train.jsonl"
+  dev_file: "data/raw/dev.jsonl"
+  test_file: "data/raw/test.jsonl"
+  num_synthetic_train: 3000
+  num_synthetic_dev: 500
+  num_synthetic_test: 800
+
+training:
+  flat:
+    epochs: 3
+    batch_size: 16
+    lr: 2.0e-5
+    warmup_ratio: 0.06
+    weight_decay: 0.01
+    eval_steps: 200
+    save_steps: 200
+    logging_steps: 50
+  hier:
+    epochs: 3
+    batch_size: 16
+    lr: 2.0e-5
+    warmup_ratio: 0.06
+    weight_decay: 0.01
+    lambda_fine: 1.0          # λ = 1 vòng đầu
+    eval_steps: 200
+    save_steps: 200
+    logging_steps: 50
+
+outputs:
+  flat_ckpt: "outputs/flat_checkpoints"
+  hier_ckpt: "outputs/hier_checkpoints"
+  flat_pred: "outputs/predictions/flat"
+  hier_pred: "outputs/predictions/hier"
+  metrics: "outputs/metrics"
+  diagnostics: "outputs/diagnostics"
+  comparison: "outputs/comparison"
+
+# W&B chỉ dùng để TRACKING: hyperparams, seed, lr, batch_size, train/dev loss,
+# Accuracy, Macro-F1, F1 từng lớp, confusion matrix, run metadata (KHÔNG lưu checkpoint/predictions ở đây).
+wandb:
+  enabled: true
+  project: "hierarchical-nli-e-first"
+  entity: null   # null = dùng entity mặc định của API key (trinhtrantran3105-uit)
+  experiment_flat: "flat-cafebert"
+  experiment_hier: "hier-cafebert"
+
+# HF Hub PRIVATE repo là nơi lưu bắt buộc: best checkpoint, tokenizer/config,
+# và dev/test predictions per-sample (logits) để tải lại model / reproduce mà không cần train lại.
+hf_hub:
+  enabled: true
+  flat_repo_id: "trinhtrantran122/hier-nli-e-first-flat-cafebert"
+  hier_repo_id: "trinhtrantran122/hier-nli-e-first-hier-cafebert"
+  private: true
+
+inference:
+  hard: true
+  soft: true
+  # Soft formula: P(E)=P_E ; P(C)=P_NonE*P_C|NonE ; P(N)=P_NonE*P_N|NonE
+
+go_stop:
+  go_if:
+    - "Macro-F1 hier > flat"
+    - "F1 C/N tăng hoặc C↔N confusion giảm"
+    - "Head1 E/Non-E đủ tốt (F1_coarse > 0.80)"
+  stop_if:
+    - "Hier kém Flat rõ ràng"
+    - "Head1 nhầm nhiều C/N → E"
+    - "Không cải thiện C↔N"
