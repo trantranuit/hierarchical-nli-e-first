@@ -10,9 +10,10 @@ class HierarchicalCafeBERT(nn.Module):
           Gold=C/N    => L = L_coarse + lambda * L_fine
     """
     def __init__(self, model_name: str, fallback_models=None, dropout: float=0.1, lambda_fine: float=1.0,
-                 gradient_checkpointing: bool=False):
+                 gradient_checkpointing: bool=False, label_smoothing: float=0.0):
         super().__init__()
         self.lambda_fine = lambda_fine
+        self.label_smoothing = label_smoothing
         self.backbone = self._load_backbone(model_name, fallback_models or [])
         if gradient_checkpointing:
             try:
@@ -50,11 +51,11 @@ class HierarchicalCafeBERT(nn.Module):
         loss = None
         if coarse_labels is not None and fine_labels is not None:
             # coarse loss always
-            loss_coarse = F.cross_entropy(coarse_logits, coarse_labels)
+            loss_coarse = F.cross_entropy(coarse_logits, coarse_labels, label_smoothing=self.label_smoothing)
             # fine loss only where fine_labels != -100 (i.e. Gold != E)
             mask = fine_labels != -100
             if mask.any():
-                loss_fine = F.cross_entropy(fine_logits[mask], fine_labels[mask])
+                loss_fine = F.cross_entropy(fine_logits[mask], fine_labels[mask], label_smoothing=self.label_smoothing)
                 loss = loss_coarse + self.lambda_fine * loss_fine
             else:
                 loss = loss_coarse

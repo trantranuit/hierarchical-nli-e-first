@@ -57,11 +57,13 @@ def train(args):
     if not args.mock:
         hparams = {
             "model": mcfg["cafebert_name"], "max_length": mcfg["max_length"], "dropout": mcfg["dropout"],
-            "epochs": trcfg["epochs"], "early_stopping_patience": trcfg.get("early_stopping_patience"),
+            "epochs": trcfg["epochs"], "early_stopping_patience_evals": trcfg.get("early_stopping_patience"),
+            "eval_steps": trcfg.get("eval_steps"),
             "lr": trcfg["lr"], "batch_size": trcfg["batch_size"],
             "grad_accum_steps": trcfg.get("grad_accum_steps", 1),
             "effective_batch_size": trcfg["batch_size"] * trcfg.get("grad_accum_steps", 1),
             "fp16": trcfg.get("fp16", False), "gradient_checkpointing": mcfg.get("gradient_checkpointing", False),
+            "label_smoothing": mcfg.get("label_smoothing", 0.0),
             "warmup_ratio": trcfg["warmup_ratio"], "weight_decay": trcfg["weight_decay"],
             "lambda_fine": trcfg["lambda_fine"], "seed": cfg["project"]["seed"],
             "num_train": len(train_ds), "num_dev": len(dev_ds), "num_test": len(test_ds) if test_ds else 0,
@@ -69,7 +71,8 @@ def train(args):
         run = wandb_helper.init_run(cfg, "hier", hparams)
 
     model = HierarchicalCafeBERT(mcfg["cafebert_name"], mcfg["fallback_models"], mcfg["dropout"], lambda_fine=trcfg["lambda_fine"],
-                                 gradient_checkpointing=mcfg.get("gradient_checkpointing", False))
+                                 gradient_checkpointing=mcfg.get("gradient_checkpointing", False),
+                                 label_smoothing=mcfg.get("label_smoothing", 0.0))
     model.to(device)
 
     grad_accum = max(1, trcfg.get("grad_accum_steps", 1))
@@ -104,11 +107,15 @@ def train(args):
     total = steps_per_epoch * trcfg["epochs"]
     scheduler = get_linear_schedule_with_warmup(optimizer, int(total * trcfg["warmup_ratio"]), total)
     best = -1
-    patience = trcfg.get("early_stopping_patience")
-    epochs_no_improve = 0
+    patience = trcfg.get("early_stopping_patience")  # in EVALS now, not epochs (eval runs every eval_steps)
+    eval_steps = trcfg.get("eval_steps")
+    evals_no_improve = 0
+    stop_training = False
 
     global_step = 0
     for epoch in range(1, trcfg["epochs"] + 1):
+        if stop_training:
+            break
         model.train(); tot = 0
         optimizer.zero_grad()
         n_batches = len(train_loader)
@@ -138,28 +145,38 @@ def train(args):
                         "train/learning_rate": scheduler.get_last_lr()[0],
                         "train/epoch_progress": epoch - 1 + batch_idx / n_batches,
                     }, step=global_step)
+
+                # eval + save-best at eval_steps granularity (not just once/epoch) — see train_flat.py
+                # for the rationale. Always also eval at the last batch of an epoch as a safety net.
+                should_eval = (eval_steps and global_step % eval_steps == 0) or is_last_batch
+                if should_eval:
+                    dev_metrics, dev_loss = evaluate(model, dev_loader, device, compute_loss=True)
+                    print(f"[eval step {global_step} epoch {epoch}] {dev_metrics} dev_loss={dev_loss:.4f}")
+                    dev_payload = {f"dev/{k}": v for k, v in dev_metrics.items()}
+                    dev_payload["dev/loss"] = dev_loss
+                    dev_payload["epoch"] = epoch
+                    wandb_helper.log_step(run, dev_payload, step=global_step)
+
+                    cur = dev_metrics["soft_macro_f1"]  # primary selection metric
+                    if cur > best:
+                        best = cur
+                        evals_no_improve = 0
+                        torch.save(model.state_dict(), best_path / "pytorch_model.bin")
+                        tok.save_pretrained(best_path)
+                        print(f"  ★ best soft_macro {best:.4f} (step {global_step})")
+                    else:
+                        evals_no_improve += 1
+                        print(f"  no improvement ({evals_no_improve}/{patience or '∞'} eval(s))")
+                        if patience is not None and evals_no_improve >= patience:
+                            print(f"[train_hier] early stopping — dev soft_macro_f1 không cải thiện sau {patience} eval liên tiếp (best={best:.4f})")
+                            wandb_helper.log_step(run, {"train/early_stopped_at_step": global_step})
+                            stop_training = True
+                    model.train()
+                    if stop_training:
+                        break
         train_loss_epoch = tot / len(train_loader)
         print(f"[epoch {epoch}] loss={train_loss_epoch:.4f} lr={scheduler.get_last_lr()[0]:.2e}")
-
-        dev_metrics, dev_loss = evaluate(model, dev_loader, device, compute_loss=True)
-        print(f"[eval dev] {dev_metrics} dev_loss={dev_loss:.4f}")
-        wandb_helper.log_epoch_metrics(run, "dev", {**dev_metrics, "loss": dev_loss}, epoch)
         wandb_helper.log_epoch_metrics(run, "train", {"loss": train_loss_epoch}, epoch)
-
-        cur = dev_metrics["soft_macro_f1"]  # primary selection metric
-        if cur > best:
-            best = cur
-            epochs_no_improve = 0
-            torch.save(model.state_dict(), best_path / "pytorch_model.bin")
-            tok.save_pretrained(best_path)
-            print(f"  ★ best soft_macro {best:.4f}")
-        else:
-            epochs_no_improve += 1
-            print(f"  no improvement ({epochs_no_improve}/{patience or '∞'} epoch(s))")
-            if patience is not None and epochs_no_improve >= patience:
-                print(f"[train_hier] early stopping — dev soft_macro_f1 không cải thiện sau {patience} epoch liên tiếp (best={best:.4f})")
-                wandb_helper.log_step(run, {"train/early_stopped_at_epoch": epoch})
-                break
 
     try:
         model.load_state_dict(torch.load(best_path / "pytorch_model.bin", map_location=device))

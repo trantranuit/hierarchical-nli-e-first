@@ -55,10 +55,12 @@ def train(args):
         hparams = {
             "model": model_cfg["cafebert_name"], "max_length": model_cfg["max_length"],
             "dropout": model_cfg["dropout"], "epochs": tr_cfg["epochs"],
-            "early_stopping_patience": tr_cfg.get("early_stopping_patience"), "lr": tr_cfg["lr"],
+            "early_stopping_patience_evals": tr_cfg.get("early_stopping_patience"),
+            "eval_steps": tr_cfg.get("eval_steps"), "lr": tr_cfg["lr"],
             "batch_size": tr_cfg["batch_size"], "grad_accum_steps": tr_cfg.get("grad_accum_steps", 1),
             "effective_batch_size": tr_cfg["batch_size"] * tr_cfg.get("grad_accum_steps", 1),
             "fp16": tr_cfg.get("fp16", False), "gradient_checkpointing": model_cfg.get("gradient_checkpointing", False),
+            "label_smoothing": model_cfg.get("label_smoothing", 0.0),
             "warmup_ratio": tr_cfg["warmup_ratio"],
             "weight_decay": tr_cfg["weight_decay"], "seed": cfg["project"]["seed"],
             "num_train": len(train_ds), "num_dev": len(dev_ds), "num_test": len(test_ds) if test_ds else 0,
@@ -66,7 +68,8 @@ def train(args):
         run = wandb_helper.init_run(cfg, "flat", hparams)
 
     model = FlatCafeBERT(model_cfg["cafebert_name"], model_cfg["fallback_models"], model_cfg["dropout"], num_labels=3,
-                        gradient_checkpointing=model_cfg.get("gradient_checkpointing", False))
+                        gradient_checkpointing=model_cfg.get("gradient_checkpointing", False),
+                        label_smoothing=model_cfg.get("label_smoothing", 0.0))
     model.to(device)
 
     grad_accum = max(1, tr_cfg.get("grad_accum_steps", 1))
@@ -96,8 +99,10 @@ def train(args):
 
     best_macro = -1; best_path = pathlib.Path(out_cfg["flat_ckpt"]) / "best"
     best_path.mkdir(parents=True, exist_ok=True)
-    patience = tr_cfg.get("early_stopping_patience")
-    epochs_no_improve = 0
+    patience = tr_cfg.get("early_stopping_patience")  # in EVALS now, not epochs (eval runs every eval_steps)
+    eval_steps = tr_cfg.get("eval_steps")
+    evals_no_improve = 0
+    stop_training = False
 
     if args.mock:
         print("[train_flat] MOCK mode — random logits, skip training (no W&B/HF push)")
@@ -105,6 +110,8 @@ def train(args):
 
     global_step = 0
     for epoch in range(1, tr_cfg["epochs"] + 1):
+        if stop_training:
+            break
         model.train(); total_loss = 0
         optimizer.zero_grad()
         n_batches = len(train_loader)
@@ -135,27 +142,40 @@ def train(args):
                         "train/learning_rate": scheduler.get_last_lr()[0],
                         "train/epoch_progress": epoch - 1 + batch_idx / n_batches,
                     }, step=global_step)
+
+                # eval + save-best at eval_steps granularity (not just once/epoch) — loss can
+                # collapse fast within a single epoch on a small dataset, so the true best
+                # checkpoint may be mid-epoch, not just at the epoch boundary. Always also
+                # eval at the last batch of an epoch as a safety net (e.g. --debug runs with
+                # few batches/epoch that never reach eval_steps).
+                should_eval = (eval_steps and global_step % eval_steps == 0) or is_last_batch
+                if should_eval:
+                    metrics, dev_loss, _ = evaluate(model, dev_loader, device, compute_loss=True)
+                    print(f"[eval step {global_step} epoch {epoch}] {metrics} dev_loss={dev_loss:.4f}")
+                    dev_payload = {f"dev/{k}": v for k, v in metrics.items()}
+                    dev_payload["dev/loss"] = dev_loss
+                    dev_payload["epoch"] = epoch
+                    wandb_helper.log_step(run, dev_payload, step=global_step)
+
+                    if metrics["macro_f1"] > best_macro:
+                        best_macro = metrics["macro_f1"]
+                        evals_no_improve = 0
+                        torch.save(model.state_dict(), best_path / "pytorch_model.bin")
+                        tok.save_pretrained(best_path)
+                        print(f"  ★ new best {best_macro:.4f} (step {global_step}) -> {best_path}")
+                    else:
+                        evals_no_improve += 1
+                        print(f"  no improvement ({evals_no_improve}/{patience or '∞'} eval(s))")
+                        if patience is not None and evals_no_improve >= patience:
+                            print(f"[train_flat] early stopping — dev macro_f1 không cải thiện sau {patience} eval liên tiếp (best={best_macro:.4f})")
+                            wandb_helper.log_step(run, {"train/early_stopped_at_step": global_step})
+                            stop_training = True
+                    model.train()
+                    if stop_training:
+                        break
         train_loss_epoch = total_loss / len(train_loader)
         print(f"[epoch {epoch}] loss={train_loss_epoch:.4f} lr={scheduler.get_last_lr()[0]:.2e}")
-
-        metrics, dev_loss, _ = evaluate(model, dev_loader, device, compute_loss=True)
-        print(f"[eval dev] {metrics} dev_loss={dev_loss:.4f}")
-        wandb_helper.log_epoch_metrics(run, "dev", {**metrics, "loss": dev_loss}, epoch)
         wandb_helper.log_epoch_metrics(run, "train", {"loss": train_loss_epoch}, epoch)
-
-        if metrics["macro_f1"] > best_macro:
-            best_macro = metrics["macro_f1"]
-            epochs_no_improve = 0
-            torch.save(model.state_dict(), best_path / "pytorch_model.bin")
-            tok.save_pretrained(best_path)
-            print(f"  ★ new best {best_macro:.4f} -> {best_path}")
-        else:
-            epochs_no_improve += 1
-            print(f"  no improvement ({epochs_no_improve}/{patience or '∞'} epoch(s))")
-            if patience is not None and epochs_no_improve >= patience:
-                print(f"[train_flat] early stopping — dev macro_f1 không cải thiện sau {patience} epoch liên tiếp (best={best_macro:.4f})")
-                wandb_helper.log_step(run, {"train/early_stopped_at_epoch": epoch})
-                break
 
     print("[train_flat] loading best for prediction...")
     try:
