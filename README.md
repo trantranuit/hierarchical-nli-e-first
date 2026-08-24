@@ -89,7 +89,10 @@ python3 scripts/evaluate_offline.py
 CafeBERT priority: `uitnlp/CafeBERT` → `vinai/phobert-base` → `xlm-roberta-base` (auto fallback nếu model chính không tải được).  
 Tokenizer fallback tương tự.
 
-**⚠️ GPU cũ (Pascal, vd Tesla P100 trên Kaggle)**: `requirements.txt` **không** liệt kê `torch` — cố tình, vì torch mới nhất trên PyPI đã bỏ hỗ trợ compute capability `sm_60` của P100 (`pip install torch` sẽ ghi đè bản torch máy/image đã cài sẵn khớp GPU, gây lỗi `CUDA error: no kernel image is available`). Dùng đúng torch có sẵn trong môi trường (Kaggle/Colab tự cài khớp GPU đã chọn); nếu máy chưa có torch, tự cài theo đúng CUDA của GPU tại pytorch.org. Trên Kaggle khuyến nghị chọn **Accelerator: GPU T4 x2** (kiến trúc Turing, luôn được các bản torch mới hỗ trợ) — code chỉ dùng 1 GPU nên không cần lo lãng phí GPU thứ 2.
+**⚠️ GPU cũ (kiến trúc Pascal trở về trước)**: `requirements.txt` **không** liệt kê `torch` — cố tình, vì torch mới nhất trên PyPI có thể đã bỏ hỗ trợ compute capability của GPU đời cũ (`pip install torch` sẽ ghi đè bản torch máy/image đã cài sẵn khớp GPU, gây lỗi `CUDA error: no kernel image is available`). Dùng đúng torch có sẵn trong môi trường (Colab tự cài khớp GPU runtime đã chọn); nếu máy chưa có torch, tự cài theo đúng CUDA của GPU tại pytorch.org.
+
+## Chạy trên Google Colab (khuyến nghị — free GPU T4)
+Mở `notebooks/colab_train.ipynb` bằng Google Colab (File → Upload notebook, hoặc mở thẳng từ GitHub qua `File → Open notebook → GitHub` rồi dán URL repo). Notebook tự: clone repo → cài deps → nạp secrets từ **Colab Secrets** (🔑 ở sidebar trái, thêm `WANDB_API_KEY` + `HF_TOKEN`, bật "Notebook access") → in toàn bộ config → kéo data thật ViANLI → train Flat + Hierarchical thật (log W&B + push HF Hub) → eval offline → in bảng so sánh cuối. `Runtime → Change runtime type → GPU (T4)` trước khi chạy. Mỗi cell shell đều `assert _exit_code == 0` nên training crash sẽ dừng notebook ngay tại chỗ thay vì âm thầm chạy tiếp.
 
 ## Các bước thực nghiệm (5 bước)
 | Bước | Thực nghiệm | Đánh giá | Đã implement |
@@ -112,7 +115,7 @@ Nếu `data/raw/*.jsonl` chưa có, pipeline tự gen synthetic (Vi template, 30
 ```bash
 python3 scripts/prepare_vianli.py --config configs/config.yaml
 ```
-Script này tải `vianli_{train,dev,test}.jsonl`, đổi `uid→id` và map nhãn (`entailment→E, contradiction→C, neutral→N`), rồi **ghi đè** `data/raw/*.jsonl`. Sau đó `load_or_generate()` thấy file đã có nên sẽ không sinh synthetic nữa — chạy `train_flat.py`/`train_hierarchical.py` bình thường là dùng đúng ViANLI. Notebook Kaggle (`notebooks/kaggle_train.ipynb`) đã tự động gọi script này trước khi train.
+Script này tải `vianli_{train,dev,test}.jsonl`, đổi `uid→id` và map nhãn (`entailment→E, contradiction→C, neutral→N`), rồi **ghi đè** `data/raw/*.jsonl`. Sau đó `load_or_generate()` thấy file đã có nên sẽ không sinh synthetic nữa — chạy `train_flat.py`/`train_hierarchical.py` bình thường là dùng đúng ViANLI. Notebook Colab (`notebooks/colab_train.ipynb`) đã tự động gọi script này trước khi train.
 
 ## Requirements
 `torch, transformers, datasets, scikit-learn, pandas, numpy, tqdm, pyyaml, accelerate, matplotlib, seaborn, wandb, huggingface_hub, python-dotenv`
